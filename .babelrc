@@ -1,0 +1,50 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env", {
+				// "targets": {
+				// 	"chrome": "67",
+				// },
+				"useBuiltIns": "usage",
+				"corejs": 3,
+				"modules": false
+			}
+		],
+		"@babel/preset-react"
+	],
+	"plugins": [
+		[
+			"@babel/plugin-transform-runtime", 
+			{
+				"corejs": 3,
+				"helpers": false,
+				"runtimeHelpers": true,
+				"regenerator": true,
+				"useESModules": true
+			}
+		],
+		[
+			"@babel/plugin-syntax-dynamic-import"
+		],
+		[
+			"@babel/plugin-proposal-decorators", 
+			{
+				"legacy": true
+			}
+		],
+		[
+			"@babel/plugin-proposal-class-properties"
+		],
+		[
+			"react-css-modules",
+			{
+				"generateScopedName": "[name]__[local]___[hash:base64:5]",
+				"filetypes": {
+					".styl": {
+						"syntax": "postcss-styl"
+					}
+				}
+			}
+		]
+	]
+}
