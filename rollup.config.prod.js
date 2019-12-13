@@ -2,28 +2,24 @@ import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import json from "@rollup/plugin-json";
 import babel from "rollup-plugin-babel";
-import { eslint } from "rollup-plugin-eslint";
+import { uglify } from 'rollup-plugin-uglify';
+import { minify } from 'uglify-es';
 import copy from 'rollup-plugin-copy';
 
 export default {
   input: './src/js/main.js',
   output: {
     file: './dist/js/bundle.js',
-    format: 'iife',
-    sourcemap: true
-  },
-  watch: {
-    include: './src/**'
+    minify: true,
+    format: 'iife'
   },
   plugins: [
-    json(),
-    eslint({
-      include: ['./src/js/**']
-    }),
+    uglify({},minify),
     resolve(),
     commonjs({
-      include: 'node_modules/**'
+      include: 'node_modules/**',  // Default: undefined
     }),
+    json(),
     babel({
       exclude: 'node_modules/**' // 只编译我们的源代码
     }),
@@ -33,7 +29,6 @@ export default {
         { src: './src/styles/images/**/*', dest: './dist/styls/images/' },
         { src: './src/js/lib/**/*', dest: './dist/js/lib/' }
       ]
-    })
+    }),
   ]
-  // external: ['axios']
 };

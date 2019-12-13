@@ -1,38 +1,27 @@
 const express = require('express');
-const config = require('../config.js');
+const path = require('path');
 const utils = require('./utils');
-
-let staticDir = '';
-let templateRootDir = '';
-let publicPath = '';
-
-if (process.env.NODE_ENV === 'production') {
-  staticDir = config.static_dir_prod;
-  templateRootDir = config.template_root_dir_prod;
-  publicPath = config.public_path_prod;
-} else {
-  staticDir = config.static_dir_dev;
-  templateRootDir = config.template_root_dir_dev;
-  publicPath = config.public_path_dev;
-};
+const listRouter = require('./list');
 
 function init() {
   const app = express();
 
-  app.use(express.static(staticDir, {
+  app.use(express.static('./', {
     dotfiles: 'ignore',
     etag: false,
     extensions: ['htm', 'html'],
     index: false,
     maxAge: '1d',
     redirect: false,
-    setHeaders: function (res, path, stat) {
-      res.set('x-timestamp', Date.now())
-    }
+    setHeaders: (res) => {
+      res.set('x-timestamp', Date.now());
+    },
   }));
 
+  app.use('/list', listRouter);
+
   app.all('*', (req, res) => {
-    utils.readContent(templateRootDir, 'index.html')
+    utils.readContent(path.resolve(__dirname, '../'), '/index.html')
       .then((content) => {
         res.send(content);
       })
@@ -41,7 +30,7 @@ function init() {
       });
   });
 
-  app.listen(config.port);
+  app.listen('8081');
 }
 
 module.exports.init = init;

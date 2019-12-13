@@ -3,5 +3,4 @@
 *.log
 .vscode
 node_modules/
-dll/
 dist/
