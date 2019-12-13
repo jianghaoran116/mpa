@@ -1,4 +1,3 @@
-# 财务云-移动端智能报表-单据详情部分  
 📢 使用rollup工具生成js文件、用babel支持es6+语法、stylus预处理css。  
 **build:prod生成压缩后的静态文件**
 
