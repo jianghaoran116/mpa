@@ -3,48 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <title></title>
-    <link rel="stylesheet" href="./dist/styles/reset.css" />
-    <link rel="stylesheet" href="./dist/styles/base.css" />
-    <link rel="stylesheet" href="./dist/styles/index.css" />
-    <script type="text/javascript">
-      (function (doc, win) {
-        var docEl = doc.documentElement,
-          isIOS = navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),
-          dpr = isIOS ? Math.min(win.devicePixelRatio, 3) : 1,
-          dpr = window.top === window.self ? dpr : 1,
-          dpr = 1,  //禁止缩放
-          scale = 1 / dpr,
-          resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
-        docEl.dataset.dpr = dpr;
-        var metaEl = doc.createElement('meta');
-        metaEl.name = 'viewport';
-        metaEl.content = 'initial-scale=' + scale + ',maximum-scale=' + scale + ', minimum-scale=' + scale;
-        docEl.firstElementChild.appendChild(metaEl);
-        var recalc = function () {
-          var width = docEl.clientWidth;
-          // if (width / dpr > 960) {
-          //   width = 960 * dpr;
-          // }
-          docEl.style.fontSize = 100 * (width / 960) + 'px';
-        };
-        recalc()
-        if (!doc.addEventListener) return;
-        win.addEventListener(resizeEvt, recalc, false);
-      })(document, window);
-    </script>
+    <title>test</title>
   </head>
   <body>
     <div class="app">
-      detail
-      <div class="wrap-1">
-
-      </div>
-      <div class="wrap-2">
-
-      </div>
+      test
     </div>
-    <script type="text/javascript" src="./dist/js/lib/axios.js"></script>
     <script type="text/javascript" src="./dist/js/bundle.js"></script>
   </body>
 </html>
