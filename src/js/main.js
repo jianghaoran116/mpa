@@ -1,11 +1,37 @@
-import { bubbleSort, quickSort } from './arith-metic';
+import { Observer } from './design-patterns';
 
-const arr = [2,4,5,1,5,6,7,89,9,10] 
-const resArr = bubbleSort(arr);
-// const resArr = bubbleSort(arr, (prev, next) => prev - next > 0);
-console.log(arr);
-console.log(resArr);
+/**
+ * 假装是个文件模块
+ */
+const registerLog = (observer) => {
+  const sendLog = (params) => {
+    console.log('log!', params);
+  }
 
-const resArr1 = quickSort(arr);
-console.log(arr);
-console.log(resArr1);
+  observer
+    .addSub('add', (param) => {
+      sendLog({...param});
+    })
+}
+
+/**
+ * 假装是个文件模块
+ */
+const tabAction = (observer) => {
+  // 发布，告诉所有订阅者，add事件发生了！
+  observer.notify('add', {
+    sum: 5
+  });
+}
+
+const start = () => {
+  const observer = Observer.get();
+
+  // 打印日志
+  registerLog(observer)
+
+  // 用户点击
+  tabAction(observer);
+}
+
+start();
