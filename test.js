@@ -1,4 +1,4 @@
-var main = (function (exports) {
+(function () {
   'use strict';
 
   function _classCallCheck(instance, Constructor) {
@@ -1832,13 +1832,10 @@ var main = (function (exports) {
     quickSort: quickSort
   };
 
-  var main = _objectSpread2({}, rum, {}, liquors);
+  var rum$1 = _objectSpread2({}, rum, {}, liquors);
   var wine = _objectSpread2({}, rum, {}, liquors);
 
-  exports.default = main;
-  exports.wine = wine;
+  console.log(rum$1);
 
-  return exports;
-
-}({}));
-//# sourceMappingURL=main.js.map
+}());
+//# sourceMappingURL=test.js.map

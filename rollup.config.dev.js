@@ -3,12 +3,12 @@ import resolve from 'rollup-plugin-node-resolve';
 import json from "@rollup/plugin-json";
 import babel from "rollup-plugin-babel";
 import { eslint } from "rollup-plugin-eslint";
-import copy from 'rollup-plugin-copy';
 
 export default {
-  input: './src/js/main.js',
+  input: './src/js/test.js',
   output: {
-    file: './dist/js/bundle.js',
+    name: 'main',
+    file: './test.js',
     format: 'iife',
     sourcemap: true
   },
@@ -26,14 +26,6 @@ export default {
     }),
     babel({
       exclude: 'node_modules/**' // 只编译我们的源代码
-    }),
-    copy({
-      targets: [
-        { src: './src/styles/fronts/**/*', dest: './dist/styles/fronts/' },
-        { src: './src/styles/images/**/*', dest: './dist/styls/images/' },
-        { src: './src/js/lib/**/*', dest: './dist/js/lib/' }
-      ]
     })
-  ]
-  // external: ['axios']
+  ],
 };

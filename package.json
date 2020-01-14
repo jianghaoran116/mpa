@@ -1,18 +1,20 @@
 {
   "name": "curlyhair-wheel",
-  "version": "0.0.9",
+  "version": "0.0.13",
   "author": "haoran",
-  "homepage": "",
   "license": "ISC",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jianghaoran116/rollup"
+  },
+  "keywords": [
+    "Pub Sub"
+  ],
+  "homepage": "https://github.com/jianghaoran116/rollup",
   "scripts": {
     "build:dev:js": "./node_modules/.bin/rollup --config rollup.config.dev.js --watch",
-    "build:dev:css": "./node_modules/.bin/stylus ./src/styles/ -o ./dist/styles/ -w",
-    "build:dev:server": "node ./server/index.js",
-    "build:npm": "./node_modules/.bin/rollup --config rollup.config.npm.js",
-    "build:prod:js": "./node_modules/.bin/rollup --config rollup.config.prod.js",
-    "build:prod:css": "./node_modules/.bin/stylus ./src/styles/ -o ./dist/styles/ -c",
-    "build:prod": "npm run build:prod:js && npm run build:prod:css"
+    "build:npm": "./node_modules/.bin/rollup --config rollup.config.npm.js"
   },
   "dependencies": {
   },
