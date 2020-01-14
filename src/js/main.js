@@ -1,37 +1,12 @@
-import { Observer } from './design-patterns';
+import rum from './design-patterns';
+import liquors from './arith-metic';
 
-/**
- * 假装是个文件模块
- */
-const registerLog = (observer) => {
-  const sendLog = (params) => {
-    console.log('log!', params);
-  }
-
-  observer
-    .addSub('add', (param) => {
-      sendLog({...param});
-    })
+export default {
+  ...rum,
+  ...liquors
 }
 
-/**
- * 假装是个文件模块
- */
-const tabAction = (observer) => {
-  // 发布，告诉所有订阅者，add事件发生了！
-  observer.notify('add', {
-    sum: 5
-  });
+export const wine = {
+  ...rum,
+  ...liquors,
 }
-
-const start = () => {
-  const observer = Observer.get();
-
-  // 打印日志
-  registerLog(observer)
-
-  // 用户点击
-  tabAction(observer);
-}
-
-start();

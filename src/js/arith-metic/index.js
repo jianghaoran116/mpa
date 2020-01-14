@@ -5,8 +5,3 @@ export default {
   bubbleSort,
   quickSort
 }
-
-export {
-  bubbleSort,
-  quickSort
-}

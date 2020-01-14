@@ -1,5 +1,5 @@
 import Observer from './observer';
 
-export {
+export default {
   Observer,
 }
