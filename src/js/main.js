@@ -1,9 +1,10 @@
 import rum from './design-patterns';
 import liquors from './arith-metic';
+export { default as curlyhairWheel } from './wheel';
 
 export default {
   ...rum,
-  ...liquors
+  ...liquors,
 }
 
 export const wine = {

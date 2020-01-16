@@ -1832,10 +1832,118 @@
     quickSort: quickSort
   };
 
-  var rum$1 = _objectSpread2({}, rum, {}, liquors);
+  /**
+   * @file 模拟实现call
+   * @author haoran
+   */
+  function callWheel() {
+    Function.prototype.callWheel = function (context) {
+      context = context || window; // 如果传null|undefined设置为window
+
+      context.fn = this;
+      var args = [];
+
+      for (var i = 1; i < arguments.length; i += 1) {
+        args.push(arguments[i]);
+      }
+
+      var res = eval('context.fn(' + args + ')');
+      delete context.fn;
+      return res;
+    };
+  }
+
+  /**
+   * @file 模拟实现apply
+   * @author haoran
+   */
+  function applyWheel() {
+    Function.prototype.applyWheel = function (context, arr) {
+      context = context || window;
+      context.fn = this;
+      var res;
+
+      if (!arr) {
+        res = context.fn();
+      } else {
+        var args = [];
+
+        for (var i = 0, len = arr.length; i < len; i += 1) {
+          args.push('arr[' + i + ']');
+        }
+
+        res = eval('context.fn(' + args + ')');
+      }
+
+      delete context.fn;
+      return res;
+    };
+  }
+
+  function bindWheel() {
+    console.log(123);
+  }
+
+  var wheel = {
+    callWheel: callWheel,
+    applyWheel: applyWheel,
+    bindWheel: bindWheel
+  };
+
+  var curlyhairWheel =
+  /*#__PURE__*/
+  function () {
+    function curlyhairWheel() {
+      _classCallCheck(this, curlyhairWheel);
+    }
+
+    _createClass(curlyhairWheel, [{
+      key: "getWheel",
+
+      /*
+       * bindWheel
+       */
+      value: function getWheel(type) {
+        return wheel[type];
+      }
+    }], [{
+      key: "get",
+      value: function get() {
+        if (!curlyhairWheel.instance) {
+          curlyhairWheel.instance = new curlyhairWheel();
+        }
+
+        return curlyhairWheel.instance;
+      }
+    }]);
+
+    return curlyhairWheel;
+  }();
+
+  _defineProperty(curlyhairWheel, "instance", null);
+
+  _objectSpread2({}, rum, {}, liquors);
   var wine = _objectSpread2({}, rum, {}, liquors);
 
-  console.log(rum$1);
+  /* eslint-disable no-unused-vars */
+  curlyhairWheel.get().getWheel('callWheel')();
+  curlyhairWheel.get().getWheel('applyWheel')();
+  var o = {
+    'value': 1
+  };
+
+  function test$2() {
+    console.log(this.value);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    console.log(args);
+  }
+
+  test$2.callWheel(o, 1, 2, 4);
+  test$2.applyWheel(o, [1, 2, 4]);
 
 }());
 //# sourceMappingURL=index.js.map
