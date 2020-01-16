@@ -14,38 +14,39 @@
   "homepage": "https://github.com/jianghaoran116/rollup",
   "scripts": {
     "build:dev:js": "./node_modules/.bin/rollup --config rollup.config.dev.js --watch",
-    "build:npm": "./node_modules/.bin/rollup --config rollup.config.npm.js"
+    "build:npm": "./node_modules/.bin/rollup --config rollup.config.npm.js",
+    "test": "./node_modules/.bin/mocha ./test/add.test.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.7.5",
     "@babel/core": "^7.7.5",
+    "@babel/plugin-external-helpers": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-proposal-decorators": "^7.7.4",
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.6",
     "@babel/runtime": "^7.7.6",
     "@babel/runtime-corejs3": "^7.7.6",
     "@rollup/plugin-json": "^4.0.0",
     "axios": "^0.19.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "core-js": "3",
+    "eslint": "^6.7.2",
     "express": "^4.17.1",
+    "mocha": "^7.0.0",
     "rollup": "^1.27.9",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-copy": "^3.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.4",
     "stylus": "^0.54.7",
-    "uglify-es": "^3.3.9",
-    "@babel/plugin-external-helpers": "^7.7.4",
-    "@babel/preset-env": "^7.7.6",
-    "eslint": "^6.7.2",
-    "rollup-plugin-copy": "^3.1.0",
-    "rollup-plugin-eslint": "^7.0.0"
+    "uglify-es": "^3.3.9"
   }
 }

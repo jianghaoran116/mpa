@@ -1838,4 +1838,4 @@
   console.log(rum$1);
 
 }());
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=index.js.map

@@ -5,10 +5,10 @@ import babel from "rollup-plugin-babel";
 import { eslint } from "rollup-plugin-eslint";
 
 export default {
-  input: './src/js/test.js',
+  input: './src/js/index.js',
   output: {
     name: 'main',
-    file: './test.js',
+    file: './index.js',
     format: 'iife',
     sourcemap: true
   },
