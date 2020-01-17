@@ -1827,9 +1827,124 @@
     return i;
   }
 
+  var createProperty = function (object, key, value) {
+    var propertyKey = toPrimitive$1(key);
+    if (propertyKey in object) objectDefineProperty$1.f(object, propertyKey, createPropertyDescriptor$1(0, value));
+    else object[propertyKey] = value;
+  };
+
+  var SPECIES$2 = wellKnownSymbol$1('species');
+  var nativeSlice = [].slice;
+  var max$1 = Math.max;
+
+  // `Array.prototype.slice` method
+  // https://tc39.github.io/ecma262/#sec-array.prototype.slice
+  // fallback for not array-like ES3 strings and DOM objects
+  _export({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('slice') }, {
+    slice: function slice(start, end) {
+      var O = toIndexedObject(this);
+      var length = toLength(O.length);
+      var k = toAbsoluteIndex(start, length);
+      var fin = toAbsoluteIndex(end === undefined ? length : end, length);
+      // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
+      var Constructor, result, n;
+      if (isArray(O)) {
+        Constructor = O.constructor;
+        // cross-realm fallback
+        if (typeof Constructor == 'function' && (Constructor === Array || isArray(Constructor.prototype))) {
+          Constructor = undefined;
+        } else if (isObject$1(Constructor)) {
+          Constructor = Constructor[SPECIES$2];
+          if (Constructor === null) Constructor = undefined;
+        }
+        if (Constructor === Array || Constructor === undefined) {
+          return nativeSlice.call(O, k, fin);
+        }
+      }
+      result = new (Constructor === undefined ? Array : Constructor)(max$1(fin - k, 0));
+      for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
+      result.length = n;
+      return result;
+    }
+  });
+
+  var slice = entryVirtual('Array').slice;
+
+  var ArrayPrototype$2 = Array.prototype;
+
+  var slice_1 = function (it) {
+    var own = it.slice;
+    return it === ArrayPrototype$2 || (it instanceof Array && own === ArrayPrototype$2.slice) ? slice : own;
+  };
+
+  var slice$1 = slice_1;
+
+  var slice$2 = slice$1;
+
+  /**
+   * @file 归并排序
+   * @author haoran
+   * @description 返回一个新数组 只能从小到大排序
+   */
+
+  /**
+   * 回溯的时候比较数组
+   * @param {array} left 
+   * @param {array} right 
+   */
+  function mergeArr(left, right) {
+    var res = [],
+        il = 0,
+        ir = 0; // 返回新的数组 每次比较两个数组 
+
+    while (il < left.length && ir < right.length) {
+      if (left[il] < right[ir]) {
+        res.push(left[il++]);
+      } else {
+        res.push(right[ir++]);
+      }
+    }
+
+    while (il < left.length) {
+      res.push(left[il++]);
+    }
+
+    while (ir < right.length) {
+      res.push(right[ir++]);
+    }
+
+    return res;
+  }
+  /**
+   * 递归拆分数组 直到左右至少有1个
+   * @param {array} arr 
+   */
+
+
+  function mergeSorcRec(arr) {
+    var length = arr.length;
+
+    if (length === 1) {
+      return arr;
+    }
+
+    var mid = length >> 1,
+        leftArr,
+        rightArr;
+    leftArr = slice$2(arr).call(arr, 0, mid);
+    rightArr = slice$2(arr).call(arr, mid, length);
+    return mergeArr(mergeSorcRec(leftArr), mergeSorcRec(rightArr));
+  }
+
+  function mergeSort(arr) {
+    var resArr = mergeSorcRec(arr);
+    return resArr;
+  }
+
   var liquors = {
     bubbleSort: bubbleSort,
-    quickSort: quickSort
+    quickSort: quickSort,
+    mergeSort: mergeSort
   };
 
   /**
@@ -1922,28 +2037,14 @@
 
   _defineProperty(curlyhairWheel, "instance", null);
 
-  _objectSpread2({}, rum, {}, liquors);
+  var rum$1 = _objectSpread2({}, rum, {}, liquors);
   var wine = _objectSpread2({}, rum, {}, liquors);
 
   /* eslint-disable no-unused-vars */
-  curlyhairWheel.get().getWheel('callWheel')();
-  curlyhairWheel.get().getWheel('applyWheel')();
-  var o = {
-    'value': 1
-  };
-
-  function test$2() {
-    console.log(this.value);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    console.log(args);
-  }
-
-  test$2.callWheel(o, 1, 2, 4);
-  test$2.applyWheel(o, [1, 2, 4]);
+  var mergeSort$1 = rum$1.mergeSort;
+  var arr = [90, 20, 8, 15, 67, 39, 35];
+  var arr2 = mergeSort$1(arr);
+  console.log(arr2);
 
 }());
 //# sourceMappingURL=index.js.map

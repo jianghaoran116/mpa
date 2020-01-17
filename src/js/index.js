@@ -1,17 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { curlyhairWheel } from './main';
+import rum from './main';
 
-curlyhairWheel.get().getWheel('callWheel')();
-curlyhairWheel.get().getWheel('applyWheel')();
+const { mergeSort } = rum;
 
-let o = {
-  'value': 1,
-}
+let arr = [90,20,8,15,67,39,35];
 
-function test(...args) {
-  console.log(this.value);
-  console.log(args);
-}
+let arr2 = mergeSort(arr);
 
-test.callWheel(o, 1, 2, 4);
-test.applyWheel(o, [1, 2, 4]);
+console.log(arr2);
