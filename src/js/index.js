@@ -1,10 +1,11 @@
-/* eslint-disable no-unused-vars */
-import rum from './main';
+import curlyhairWheel from './main';
 
-const { mergeSort } = rum;
+const { 
+  mergeSort, // 归并排序  
+} = curlyhairWheel;
 
-let arr = [90,20,8,15,67,39,35];
-
-let arr2 = mergeSort(arr);
-
+let arr = [1,3,4,56,6,7,8,10];
+// let arr2 = mergeSort(arr);
+let arr2 = mergeSort(arr, (a, b) => a - b > 0);
 console.log(arr2);
+console.log(arr);

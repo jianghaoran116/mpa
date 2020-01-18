@@ -40,3 +40,17 @@ const { Observer } = rum;
     });
   };
 ```  
+
+## 包含一些算法
+``` javascript  
+import curlyhairWheel from './main';
+
+const { 
+  mergeSort, // 归并排序 返回一个新数组对象 默认升序  
+} = curlyhairWheel;
+
+let arr = [1,3,4,56,6,7,8,10];
+// let arr2 = mergeSort(arr);
+let arr2 = mergeSort(arr, (prev, next) => prev - next > 0);
+
+```  

@@ -1888,17 +1888,29 @@
    */
 
   /**
+   * 设置以什么规则排序
+   * @param {number} prev 
+   * @param {number} next 
+   */
+  function judgeFun$1(prev, next) {
+    return next - prev > 0;
+  }
+  /**
    * 回溯的时候比较数组
    * @param {array} left 
    * @param {array} right 
+   * @param {function} judge 
    */
-  function mergeArr(left, right) {
+
+
+  function mergeArr(left, right, judge) {
     var res = [],
         il = 0,
         ir = 0; // 返回新的数组 每次比较两个数组 
 
     while (il < left.length && ir < right.length) {
-      if (left[il] < right[ir]) {
+      // if (left[il] < right[ir]) {
+      if (judge(left[il], right[ir])) {
         res.push(left[il++]);
       } else {
         res.push(right[ir++]);
@@ -1916,12 +1928,12 @@
     return res;
   }
   /**
-   * 递归拆分数组 直到左右至少有1个
+   * 递归拆分数组 直到左右至多有1个
    * @param {array} arr 
    */
 
 
-  function mergeSorcRec(arr) {
+  function mergeSorcRec(arr, judge) {
     var length = arr.length;
 
     if (length === 1) {
@@ -1933,11 +1945,12 @@
         rightArr;
     leftArr = slice$2(arr).call(arr, 0, mid);
     rightArr = slice$2(arr).call(arr, mid, length);
-    return mergeArr(mergeSorcRec(leftArr), mergeSorcRec(rightArr));
+    return mergeArr(mergeSorcRec(leftArr, judge), mergeSorcRec(rightArr, judge), judge);
   }
 
   function mergeSort(arr) {
-    var resArr = mergeSorcRec(arr);
+    var judge = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : judgeFun$1;
+    var resArr = mergeSorcRec(arr, judge);
     return resArr;
   }
 
@@ -2037,14 +2050,17 @@
 
   _defineProperty(curlyhairWheel, "instance", null);
 
-  var rum$1 = _objectSpread2({}, rum, {}, liquors);
+  var curlyhairWheel$1 = _objectSpread2({}, rum, {}, liquors);
   var wine = _objectSpread2({}, rum, {}, liquors);
 
-  /* eslint-disable no-unused-vars */
-  var mergeSort$1 = rum$1.mergeSort;
-  var arr = [90, 20, 8, 15, 67, 39, 35];
-  var arr2 = mergeSort$1(arr);
+  var mergeSort$1 = curlyhairWheel$1.mergeSort;
+  var arr = [1, 3, 4, 56, 6, 7, 8, 10]; // let arr2 = mergeSort(arr);
+
+  var arr2 = mergeSort$1(arr, function (a, b) {
+    return a - b > 0;
+  });
   console.log(arr2);
+  console.log(arr);
 
 }());
 //# sourceMappingURL=index.js.map
