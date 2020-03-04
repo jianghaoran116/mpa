@@ -15,9 +15,22 @@
   "scripts": {
     "build:dev:js": "./node_modules/.bin/rollup --config rollup.config.dev.js --watch",
     "build:npm": "./node_modules/.bin/rollup --config rollup.config.npm.js",
+    "commit": "git-cz",
     "test": "./node_modules/.bin/mocha ./test/add.test.js"
   },
-  "dependencies": {},
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "dependencies": {
+    "@commitlint/cli": "^8.3.5"
+  },
   "devDependencies": {
     "@babel/cli": "^7.7.5",
     "@babel/core": "^7.7.5",
@@ -36,8 +49,10 @@
     "babel-eslint": "^10.0.3",
     "babel-preset-es2015-rollup": "^3.0.0",
     "core-js": "3",
+    "cz-conventional-changelog": "^3.1.0",
     "eslint": "^6.7.2",
     "express": "^4.17.1",
+    "git-cz": "^4.3.1",
     "mocha": "^7.0.0",
     "rollup": "^1.27.9",
     "rollup-plugin-babel": "^4.3.3",
