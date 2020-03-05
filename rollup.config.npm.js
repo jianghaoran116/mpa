@@ -5,7 +5,7 @@ import babel from "rollup-plugin-babel";
 import { eslint } from "rollup-plugin-eslint";
 
 export default {
-  input: './src/js/main.js',
+  input: './src/main.js',
   output: {
     name: 'main',
     file: './main.js',
@@ -18,7 +18,7 @@ export default {
   plugins: [
     json(),
     eslint({
-      include: ['./src/js/**']
+      include: ['./src/**']
     }),
     resolve(),
     commonjs({

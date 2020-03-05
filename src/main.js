@@ -1,13 +1,15 @@
 import rum from './design-patterns';
 import liquors from './arith-metic';
-export { default as curlyhairWheel } from './wheel';
+import wheel from './wheel';
 
 export default {
-  ...rum,
-  ...liquors,
+  wheel, // 轮子
+  rum, // 设计模式
+  liquors, // 算法
 }
 
 export const wine = {
-  ...rum,
-  ...liquors,
+  wheel,
+  rum,
+  liquors,
 }
