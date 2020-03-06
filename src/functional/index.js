@@ -44,3 +44,25 @@ export const memoized = (fn) => {
   
   return (args) => lookupTable[args] || (lookupTable[args] = fn(args))
 }
+
+export const carryOnly2 = (fn) => (firstArg) => (secondArg) => fn(firstArg, secondArg)
+
+/**
+ * 柯里化函数
+ * @param {function} fn
+*/
+export const carry = (fn) => {
+  if (typeof fn !== 'function') {
+    throw new Error('shoulde be a function');
+  }
+
+  return function curriedFun(...args) {
+    if (args.length < fn.length) {
+      return function() {
+        return curriedFun.apply(null, args.concat([].slice.call(arguments)));
+      };
+    }
+    
+    return fn.apply(null, args)
+  }
+}

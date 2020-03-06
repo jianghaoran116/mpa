@@ -5,7 +5,9 @@ const {
   // forEach,
   // forEachObject,
   // once,
-  memoized,
+  // memoized,
+  carryOnly2,
+  carry,
 } = wine;
 
 // [1, 2, 3].forEach((item) => {
@@ -30,12 +32,27 @@ const {
 // onceClick();
 // onceClick();
 
-function add(a) {
-  console.log('add');
-  return a + 1;
+// function add(a) {
+//   console.log('add');
+//   return a + 1;
+// }
+// let memoizedAdd = memoized(add);
+// let temp = memoizedAdd(1);
+// console.log(temp);
+// let temp2 = memoizedAdd(1);
+// console.log(temp2);
+
+function addCurry(a, b) {
+  return a + b;
 }
-let memoizedAdd = memoized(add);
-let temp = memoizedAdd(1);
-console.log(temp);
-let temp2 = memoizedAdd(1);
-console.log(temp2);
+
+let tempAddCurry = addCurry(1, 1);
+console.log(tempAddCurry);
+
+let curryAddCurry = carryOnly2(addCurry);
+let tempAddCurry2 = curryAddCurry(1)(2);
+console.log(tempAddCurry2);
+
+let curryNaddCurry = carry(addCurry);
+console.log(curryNaddCurry(1)(2));
+console.log(curryNaddCurry(2)(3));
