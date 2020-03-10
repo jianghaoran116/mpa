@@ -45,13 +45,13 @@ export const memoized = (fn) => {
   return (args) => lookupTable[args] || (lookupTable[args] = fn(args))
 }
 
-export const carryOnly2 = (fn) => (firstArg) => (secondArg) => fn(firstArg, secondArg)
+export const curryOnly2 = (fn) => (firstArg) => (secondArg) => fn(firstArg, secondArg)
 
 /**
  * 柯里化函数
  * @param {function} fn
 */
-export const carry = (fn) => {
+export const curry = (fn) => {
   if (typeof fn !== 'function') {
     throw new Error('shoulde be a function');
   }
@@ -65,4 +65,17 @@ export const carry = (fn) => {
     
     return fn.apply(null, args)
   }
-}
+};
+
+export const partial = (fn,...partialArgs) => {
+  let args = partialArgs.slice(0);
+  return function(...fullArguments) {
+    let arg = 0;
+    for (let i = 0; i < args.length && arg < fullArguments.length; i++) {
+      if (args[i] === undefined) {
+        args[i] = fullArguments[arg++];
+        }
+      }
+      return fn.apply(this, args);
+  };
+};

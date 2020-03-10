@@ -6,8 +6,8 @@ const {
   // forEachObject,
   // once,
   // memoized,
-  carryOnly2,
-  carry,
+  curryOnly2,
+  curry,
 } = wine;
 
 // [1, 2, 3].forEach((item) => {
@@ -49,10 +49,43 @@ function addCurry(a, b) {
 let tempAddCurry = addCurry(1, 1);
 console.log(tempAddCurry);
 
-let curryAddCurry = carryOnly2(addCurry);
+let curryAddCurry = curryOnly2(addCurry);
 let tempAddCurry2 = curryAddCurry(1)(2);
 console.log(tempAddCurry2);
 
-let curryNaddCurry = carry(addCurry);
+let curryNaddCurry = curry(addCurry);
 console.log(curryNaddCurry(1)(2));
 console.log(curryNaddCurry(2)(3));
+
+/**
+ * 柯里化函数实现找出数组里包含数字的项
+ */
+
+let match = curry(function(expr, str) {
+  return str.match(expr);
+})
+
+let hasNumber = match(/[0-9]+/);
+
+let filter = curry(function(f, ary) {
+  return ary.filter(f)
+})
+
+let findNumbersInArray = filter(hasNumber);
+
+console.log(findNumbersInArray(['123', 'asdfadsf', 'joge1', 'joge']))
+
+// let match = carry(function(expr, str) {
+//   return str.match(expr);
+// })
+
+// console.log(match);
+// let hasNumber = match(/[0-9]+/);
+// console.log(hasNumber);
+
+// let filter = carry(function(f, ary) {
+//   return ary.filter(f);
+// });
+
+// let findNumbersInArray = filter(hasNumber)
+// console.log(findNumbersInArray(['123', 'asdfadsf', 'joge1', 'joge']))
