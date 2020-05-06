@@ -13,6 +13,22 @@ export const forEach = (array, fn) => {
   }
 }
 
+export const map = (array,fn) => {
+  let results = []
+  for(const value of array)
+      results.push(fn(value))
+
+  return results;  
+}
+
+export const filter = (array,fn) => {
+  let results = []
+  for(const value of array)
+     (fn(value)) ? results.push(value) : undefined
+
+  return results;  
+}
+
 export const forEachObject = (obj, fn) => {
   for (let prototype in obj) {
     if (Reflect.hasOwnProperty.call(obj, prototype)) {
@@ -79,3 +95,9 @@ export const partial = (fn,...partialArgs) => {
       return fn.apply(this, args);
   };
 };
+
+/**
+ * compose
+ * @param {function} a 
+ */
+export const compose = (a, b) => (c) => a(b(c));
