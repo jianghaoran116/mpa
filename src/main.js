@@ -11,7 +11,9 @@
 // }
 
 import da from './datastructures-algorithms/index';
+import MyPromise from './wheel/my-promise';
 
 export default {
-  da
+  da,
+  MyPromise
 }
