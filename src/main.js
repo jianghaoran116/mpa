@@ -11,9 +11,11 @@
 // }
 
 import da from './datastructures-algorithms/index';
+import liquors from './arith-metic';
 import MyPromise from './wheel/my-promise';
 
 export default {
   da,
-  MyPromise
+  MyPromise,
+  liquors,
 }
