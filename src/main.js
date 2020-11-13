@@ -10,12 +10,12 @@
 //   ...functional, // 函数式
 // }
 
-import da from './datastructures-algorithms/index';
+import DS from './datastructures/index';
 import liquors from './arith-metic';
 import MyPromise from './wheel/my-promise';
 
 export default {
-  da,
+  DS,
   MyPromise,
   liquors,
 }
