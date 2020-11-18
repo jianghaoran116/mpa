@@ -53,14 +53,15 @@ export class StackFromArray {
 
 export class StackFromObj {
   constructor() {
-    this.count = 0;
-    this.items = {};
   }
+
+  #count = 0;
+  #items = {};
 
   // 添加一个（或几个）新元素到栈顶
   push = (element) => {
-    this.items[this.count] = element;
-    this.count++;
+    this.#items[this.#count] = element;
+    this.#count++;
   }
 
   // 移除栈顶的元素，同时返回被移除的元素
@@ -69,9 +70,9 @@ export class StackFromObj {
       return undefined;
     }
 
-    this.count--;
-    const result = this.items[this.count];
-    delete this.items[this.count];
+    this.#count--;
+    const result = this.#items[this.#count];
+    delete this.#items[this.#count];
     return result;
   }
 
@@ -81,32 +82,32 @@ export class StackFromObj {
       return undefined;
     }
 
-    return this.items[this.count - 1];
+    return this.#items[this.#count - 1];
   }
 
   // 如果栈里没有任何元素就返回true，否则返回false
   isEmpty = () => {
-    return this.count === 0;
+    return this.#count === 0;
   }
 
   // 移除栈里的所有元素
   clear = () => {
-    this.items = {};
-    this.count = 0;
+    this.#items = {};
+    this.#count = 0;
   }
 
   // 返回栈里的元素个数。该方法和数组的length属性很类似
   size = () => {
-    return this.count;
+    return this.#count;
   }
 
   toString() {
     if (this.isEmpty()) {
       return '';
     }
-    let objString = `${this.items[0]}`; // {1}
-    for (let i = 1; i < this.count; i++) { // {2}
-      objString = `${objString},${this.items[i]}`; // {3}
+    let objString = `${this.#items[0]}`;
+    for (let i = 1; i < this.#count; i++) {
+      objString = `${objString},${this.#items[i]}`;
     }
     return objString;
   }
