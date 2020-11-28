@@ -3,11 +3,11 @@
  * 止水版本
  */
 
-const isFunction = variable => typeof variable === 'function';
+const isFunction = (variable) => typeof variable === "function";
 
-const PENDING = 'PENDING';
-const FULFILLED = 'FULFILLED';
-const REJECTED = 'REJECTED';
+const PENDING = "PENDING";
+const FULFILLED = "FULFILLED";
+const REJECTED = "REJECTED";
 
 export default class MyPromise {
   constructor(handle) {
@@ -18,7 +18,7 @@ export default class MyPromise {
 
     try {
       handle(this._resolve.bind(this), this._reject.bind(this));
-    } catch(err) {
+    } catch (err) {
       this._reject(err);
     }
   }
@@ -30,35 +30,38 @@ export default class MyPromise {
       // 依次执行成功队列中的函数，并清空队列
       const runFulfilled = (value) => {
         let cb;
-        while(cb = this._fulfilledQueues.shift()) {
+        while ((cb = this._fulfilledQueues.shift())) {
           cb(value);
         }
-      }
+      };
 
       // 依次执行失败队列中的函数，并清空队列
       const runRejected = (error) => {
         let cb;
-        while(cb = this._rejectedQueues.shift()) {
+        while ((cb = this._rejectedQueues.shift())) {
           cb(error);
         }
-      }
+      };
 
       if (val instanceof MyPromise) {
-        val.then(value => {
-          this._value = value;
-          this._status = FULFILLED;
-          runFulfilled(value);
-        }, err => {
-          this._value = err;
-          this._status = REJECTED;
-          runRejected(err);
-        })
+        val.then(
+          (value) => {
+            this._value = value;
+            this._status = FULFILLED;
+            runFulfilled(value);
+          },
+          (err) => {
+            this._value = err;
+            this._status = REJECTED;
+            runRejected(err);
+          }
+        );
       } else {
         this._value = val;
         this._status = FULFILLED;
         runFulfilled(val);
       }
-    }
+    };
     setTimeout(run, 0);
   }
 
@@ -67,22 +70,19 @@ export default class MyPromise {
       this._value = err;
       this._status = REJECTED;
       let cb;
-      while(cb = this._rejectedQueues.shift()) {
+      while ((cb = this._rejectedQueues.shift())) {
         cb(err);
       }
-    }
+    };
     setTimeout(run, 0);
   }
 
   then(onFulfilled, onRejected) {
-    const {
-      _value,
-      _status,
-    } = this;
+    const { _value, _status } = this;
     // 返回一个新的promise对象
     return new MyPromise((onFulfilledNext, onRejectedNext) => {
       // 封装一个成功时执行的函数
-      let fulfilled = value => {
+      let fulfilled = (value) => {
         try {
           if (!isFunction(onFulfilled)) {
             onFulfilledNext(value);
@@ -94,12 +94,12 @@ export default class MyPromise {
               onFulfilledNext(res);
             }
           }
-        } catch(err) {
+        } catch (err) {
           onRejectedNext(err);
         }
-      }
+      };
 
-      let rejected = error => {
+      let rejected = (error) => {
         try {
           if (!isFunction(onRejected)) {
             onRejectedNext(error);
@@ -111,12 +111,12 @@ export default class MyPromise {
               onFulfilledNext(error);
             }
           }
-        } catch(err) {
+        } catch (err) {
           onRejectedNext(err);
         }
-      }
+      };
 
-      switch(_status) {
+      switch (_status) {
         case PENDING:
           this._fulfilledQueues.push(fulfilled);
           this._rejectedQueues.push(rejected);
@@ -128,17 +128,16 @@ export default class MyPromise {
           rejected(_value);
           break;
       }
-
-    })
+    });
   }
 
   catch(onRejected) {
-    return this.then(null, onRejected)
+    return this.then(null, onRejected);
   }
 
   static resolve(value) {
     if (value instanceof MyPromise) return value;
-    return new MyPromise(resolve => resolve(value));
+    return new MyPromise((resolve) => resolve(value));
   }
 
   static reject(value) {
@@ -151,26 +150,94 @@ export default class MyPromise {
       let count = 0;
 
       for (let [i, p] of list.entries()) {
-        this.resolve(p).then(res => {
-          values[i] = res;
-          count ++;
-          if (count === list.length) resolve(values);
-        }, err => {
-          reject(err);
-        })
+        this.resolve(p).then(
+          (res) => {
+            values[i] = res;
+            count++;
+            if (count === list.length) resolve(values);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
       }
-    })
+    });
   }
 
   static race(list) {
     return new MyPromise((resolve, reject) => {
       for (let p of list) {
-        this.resolve(p).then(res => {
-          resolve(res);
-        }, err => {
-          reject(err);
-        })
+        this.resolve(p).then(
+          (res) => {
+            resolve(res);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
       }
-    })
+    });
   }
 }
+
+// Object.defineProperty(Promise, "test", {
+//   value: function (list, max) {
+//     return new Promise((resolve) => {
+//       const values = [];
+//       let count = 0;
+//       let runLength = 0;
+
+//       while (count <= list.length) {
+//         console.log("count::::", count);
+//         if (runLength < max) {
+//           Promise.resolve(list[count]).then((res) => {
+//             values[count] = res;
+//             count++;
+//             runLength--;
+//           });
+//         }
+
+//         if (count == list.length) {
+//           resolve(values);
+//           count++;
+//           break;
+//         }
+//       }
+//     });
+//   },
+// });
+
+// let temp = new Date().getTime();
+// console.log(temp);
+// Promise.test(
+//   [
+//     new Promise((resolve) => {
+//       console.log(1);
+//       setTimeout(() => {
+//         resolve(1);
+//       }, 1000);
+//     }),
+//     new Promise((resolve) => {
+//       console.log(2);
+//       setTimeout(() => {
+//         resolve(2);
+//       }, 2000);
+//     }),
+//     new Promise((resolve) => {
+//       console.log(3);
+//       setTimeout(() => {
+//         resolve(3);
+//       }, 3000);
+//     }),
+//     new Promise((resolve) => {
+//       console.log(4);
+//       setTimeout(() => {
+//         resolve(4);
+//       }, 4000);
+//     }),
+//   ],
+//   2
+// ).then((res) => {
+//   console.log(res);
+//   console.log(new Date().getTime() - temp);
+// });

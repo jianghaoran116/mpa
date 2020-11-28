@@ -5,6 +5,7 @@
 import { StackFromArray, StackFromObj } from './stack';
 import { Queue, Deque } from './queue';
 import { BinarySearchTree } from './binary-search-tree';
+import { Graph } from './graph';
 
 export default {
   StackFromArray,
@@ -12,4 +13,5 @@ export default {
   Queue,
   Deque,
   BinarySearchTree,
+  Graph,
 }

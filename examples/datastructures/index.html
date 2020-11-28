@@ -3,12 +3,40 @@
   <head>
     <meta charset="utf-8">
     <title>js数据结构</title>
+    <style type="text/css">
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .canvas {
+        width: 512;
+        height: 400;
+        border: 1px solid #CCCCCC;
+      }
+
+      .button {
+        cursor: pointer;
+        color: cadetblue;
+      }
+    </style>
   </head>
   <body>
-    <script src="/__build__/datastructures.js"></script>
     <ul>
       <li>栈 stack</li>
       <li>队列和双端队列 queue</li>
     </ul>
+
+    <div>
+      <span>广度优先遍历</span>
+      <span class="button" id="bfs-init">init</span>
+      <span class="button" id="bfs-start">start</span>
+      <br />
+      <canvas id="BFS" class="canvas" width="512" height="400"></canvas>
+    </div>
+
+    <script src="./rough.js"></script>
+    <script src="./d3-hierarchy.v1.min.js"></script>
+    <script src="/__build__/datastructures.js"></script>
   </body>
 </html>

@@ -37,7 +37,34 @@ class MyPromise {
   }
 
   then(onFulfilled, onRejected) {
+    const {
+      _value,
+      _status,
+    } = this;
+    return new MyPromise((onFulfilledNext, onRejectedNext) => {
 
+      let fulfilled = value => {
+
+      }
+
+      let rejected = err => {
+        
+      }
+
+      switch(_status) {
+        case PENDING:
+          this._fulfilledQueues.push(fulfilled);
+          this._rejectedQueues.push(rejected);
+          break;
+        case FULFILLED:
+          fulfilled(_value);
+          break;
+        case REJECTED:
+          rejected(_value);
+          break;
+      }
+
+    })
   }
 
   catch() {

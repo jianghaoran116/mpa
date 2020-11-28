@@ -3146,6 +3146,17 @@ var main = (function () {
 
 	  return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
 	}
+	function defaultToString(item) {
+	  if (item === null) {
+	    return 'NULL';
+	  } else if (item === undefined) {
+	    return 'UNDEFINED';
+	  } else if (typeof item === 'string' || item instanceof String) {
+	    return "".concat(item);
+	  }
+
+	  return item.toString();
+	}
 
 	var Node = /*#__PURE__*/function () {
 	  function Node(key) {
@@ -3356,6 +3367,407 @@ var main = (function () {
 	  this.root = null; // {1} Node类型的根节点
 	};
 
+	var defineProperty$4 = Object.defineProperty;
+	var cache = {};
+
+	var thrower = function (it) { throw it; };
+
+	var arrayMethodUsesToLength = function (METHOD_NAME, options) {
+	  if (has(cache, METHOD_NAME)) return cache[METHOD_NAME];
+	  if (!options) options = {};
+	  var method = [][METHOD_NAME];
+	  var ACCESSORS = has(options, 'ACCESSORS') ? options.ACCESSORS : false;
+	  var argument0 = has(options, 0) ? options[0] : thrower;
+	  var argument1 = has(options, 1) ? options[1] : undefined;
+
+	  return cache[METHOD_NAME] = !!method && !fails(function () {
+	    if (ACCESSORS && !descriptors) return true;
+	    var O = { length: -1 };
+
+	    if (ACCESSORS) defineProperty$4(O, 1, { enumerable: true, get: thrower });
+	    else O[1] = 1;
+
+	    method.call(O, argument0, argument1);
+	  });
+	};
+
+	var $includes = arrayIncludes.includes;
+
+
+
+	var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+
+	// `Array.prototype.includes` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.includes
+	_export({ target: 'Array', proto: true, forced: !USES_TO_LENGTH }, {
+	  includes: function includes(el /* , fromIndex = 0 */) {
+	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var includes = entryVirtual('Array').includes;
+
+	var MATCH = wellKnownSymbol('match');
+
+	// `IsRegExp` abstract operation
+	// https://tc39.github.io/ecma262/#sec-isregexp
+	var isRegexp = function (it) {
+	  var isRegExp;
+	  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
+	};
+
+	var notARegexp = function (it) {
+	  if (isRegexp(it)) {
+	    throw TypeError("The method doesn't accept regular expressions");
+	  } return it;
+	};
+
+	var MATCH$1 = wellKnownSymbol('match');
+
+	var correctIsRegexpLogic = function (METHOD_NAME) {
+	  var regexp = /./;
+	  try {
+	    '/./'[METHOD_NAME](regexp);
+	  } catch (e) {
+	    try {
+	      regexp[MATCH$1] = false;
+	      return '/./'[METHOD_NAME](regexp);
+	    } catch (f) { /* empty */ }
+	  } return false;
+	};
+
+	// `String.prototype.includes` method
+	// https://tc39.github.io/ecma262/#sec-string.prototype.includes
+	_export({ target: 'String', proto: true, forced: !correctIsRegexpLogic('includes') }, {
+	  includes: function includes(searchString /* , position = 0 */) {
+	    return !!~String(requireObjectCoercible(this))
+	      .indexOf(notARegexp(searchString), arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var includes$1 = entryVirtual('String').includes;
+
+	var ArrayPrototype$2 = Array.prototype;
+	var StringPrototype = String.prototype;
+
+	var includes$2 = function (it) {
+	  var own = it.includes;
+	  if (it === ArrayPrototype$2 || (it instanceof Array && own === ArrayPrototype$2.includes)) return includes;
+	  if (typeof it === 'string' || it === StringPrototype || (it instanceof String && own === StringPrototype.includes)) {
+	    return includes$1;
+	  } return own;
+	};
+
+	var includes$3 = includes$2;
+
+	var includes$4 = includes$3;
+
+	var FAILS_ON_PRIMITIVES = fails(function () { objectKeys(1); });
+
+	// `Object.keys` method
+	// https://tc39.github.io/ecma262/#sec-object.keys
+	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
+	  keys: function keys(it) {
+	    return objectKeys(toObject(it));
+	  }
+	});
+
+	var keys$3 = path.Object.keys;
+
+	var keys$4 = keys$3;
+
+	var keys$5 = keys$4;
+
+	var propertyIsEnumerable = objectPropertyIsEnumerable.f;
+
+	// `Object.{ entries, values }` methods implementation
+	var createMethod$4 = function (TO_ENTRIES) {
+	  return function (it) {
+	    var O = toIndexedObject(it);
+	    var keys = objectKeys(O);
+	    var length = keys.length;
+	    var i = 0;
+	    var result = [];
+	    var key;
+	    while (length > i) {
+	      key = keys[i++];
+	      if (!descriptors || propertyIsEnumerable.call(O, key)) {
+	        result.push(TO_ENTRIES ? [key, O[key]] : O[key]);
+	      }
+	    }
+	    return result;
+	  };
+	};
+
+	var objectToArray = {
+	  // `Object.entries` method
+	  // https://tc39.github.io/ecma262/#sec-object.entries
+	  entries: createMethod$4(true),
+	  // `Object.values` method
+	  // https://tc39.github.io/ecma262/#sec-object.values
+	  values: createMethod$4(false)
+	};
+
+	var $values = objectToArray.values;
+
+	// `Object.values` method
+	// https://tc39.github.io/ecma262/#sec-object.values
+	_export({ target: 'Object', stat: true }, {
+	  values: function values(O) {
+	    return $values(O);
+	  }
+	});
+
+	var values = path.Object.values;
+
+	var values$1 = values;
+
+	var values$2 = values$1;
+
+	var $map = arrayIteration.map;
+
+
+
+	var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
+	// FF49- issue
+	var USES_TO_LENGTH$1 = arrayMethodUsesToLength('map');
+
+	// `Array.prototype.map` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.map
+	// with adding support of @@species
+	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH$1 }, {
+	  map: function map(callbackfn /* , thisArg */) {
+	    return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var map = entryVirtual('Array').map;
+
+	var ArrayPrototype$3 = Array.prototype;
+
+	var map_1 = function (it) {
+	  var own = it.map;
+	  return it === ArrayPrototype$3 || (it instanceof Array && own === ArrayPrototype$3.map) ? map : own;
+	};
+
+	var map$1 = map_1;
+
+	var map$2 = map$1;
+
+	var ValuePair = /*#__PURE__*/function () {
+	  function ValuePair(key, value) {
+	    _classCallCheck(this, ValuePair);
+
+	    this.key = key;
+	    this.value = value;
+	  }
+
+	  _createClass(ValuePair, [{
+	    key: "toString",
+	    value: function toString() {
+	      var _context;
+
+	      return concat$2(_context = "[#".concat(this.key, ": ")).call(_context, this.value, "]");
+	    }
+	  }]);
+
+	  return ValuePair;
+	}();
+
+	var Dictionary = /*#__PURE__*/function () {
+	  function Dictionary() {
+	    var toStrFn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultToString;
+
+	    _classCallCheck(this, Dictionary);
+
+	    this.toStrFn = toStrFn;
+	    this.table = {};
+	  }
+
+	  _createClass(Dictionary, [{
+	    key: "set",
+	    value: function set(key, value) {
+	      if (key != null && value != null) {
+	        var tableKey = this.toStrFn(key);
+	        this.table[tableKey] = new ValuePair(key, value);
+	        return true;
+	      }
+
+	      return false;
+	    }
+	  }, {
+	    key: "get",
+	    value: function get(key) {
+	      var valuePair = this.table[this.toStrFn(key)];
+	      return valuePair == null ? undefined : valuePair.value;
+	    }
+	  }, {
+	    key: "hasKey",
+	    value: function hasKey(key) {
+	      return this.table[this.toStrFn(key)] != null;
+	    }
+	  }, {
+	    key: "remove",
+	    value: function remove(key) {
+	      if (this.hasKey(key)) {
+	        delete this.table[this.toStrFn(key)];
+	        return true;
+	      }
+
+	      return false;
+	    }
+	  }, {
+	    key: "values",
+	    value: function values() {
+	      var _context;
+
+	      return map$2(_context = this.keyValues()).call(_context, function (valuePair) {
+	        return valuePair.value;
+	      });
+	    }
+	  }, {
+	    key: "keys",
+	    value: function keys() {
+	      var _context2;
+
+	      return map$2(_context2 = this.keyValues()).call(_context2, function (valuePair) {
+	        return valuePair.key;
+	      });
+	    }
+	  }, {
+	    key: "keyValues",
+	    value: function keyValues() {
+	      return values$2(this.table);
+	    }
+	  }, {
+	    key: "forEach",
+	    value: function forEach(callbackFn) {
+	      var valuePairs = this.keyValues();
+
+	      for (var i = 0; i < valuePairs.length; i++) {
+	        var result = callbackFn(valuePairs[i].key, valuePairs[i].value);
+
+	        if (result === false) {
+	          break;
+	        }
+	      }
+	    }
+	  }, {
+	    key: "isEmpty",
+	    value: function isEmpty() {
+	      return this.size() === 0;
+	    }
+	  }, {
+	    key: "size",
+	    value: function size() {
+	      return keys$5(this.table).length;
+	    }
+	  }, {
+	    key: "clear",
+	    value: function clear() {
+	      this.table = {};
+	    }
+	  }, {
+	    key: "toString",
+	    value: function toString() {
+	      if (this.isEmpty()) {
+	        return '';
+	      }
+
+	      var valuePairs = this.keyValues();
+	      var objString = "".concat(valuePairs[0].toString());
+
+	      for (var i = 1; i < valuePairs.length; i++) {
+	        var _context3;
+
+	        objString = concat$2(_context3 = "".concat(objString, ",")).call(_context3, valuePairs[i].toString());
+	      }
+
+	      return objString;
+	    }
+	  }]);
+
+	  return Dictionary;
+	}();
+
+	var Graph = /*#__PURE__*/function () {
+	  /**
+	   * @param {boolean} isDirected - 是否有向
+	   */
+	  function Graph() {
+	    var _this = this;
+
+	    var isDirected = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+	    _classCallCheck(this, Graph);
+
+	    _defineProperty(this, "addVertex", function (v) {
+	      var _context;
+
+	      if (!includes$4(_context = _this.vertices).call(_context, v)) {
+	        _this.vertices.push(v);
+
+	        _this.adjList.set(v, []);
+	      }
+	    });
+
+	    _defineProperty(this, "addEdge", function (v, w) {
+	      if (!_this.adjList.get(v)) {
+	        _this.addVertex(v);
+	      }
+
+	      if (!_this.adjList.get(w)) {
+	        _this.addVertex(w);
+	      }
+
+	      _this.adjList.get(v).push(w);
+
+	      if (!_this.isDirected) {
+	        _this.adjList.get(w).push(v);
+	      }
+	    });
+
+	    this.isDirected = isDirected;
+	    this.vertices = [];
+	    this.adjList = new Dictionary(); // 用字典的形式来表示邻接表 - 表示边
+	  } // 添加一个新的顶点
+
+
+	  _createClass(Graph, [{
+	    key: "getVertices",
+	    // 返回顶点列表
+	    value: function getVertices() {
+	      return this.vertices;
+	    } // 返回边
+
+	  }, {
+	    key: "getAdjList",
+	    value: function getAdjList() {
+	      return this.adjList;
+	    }
+	  }, {
+	    key: "toString",
+	    value: function toString() {
+	      var s = '';
+
+	      for (var i = 0; i < this.vertices.length; i++) {
+	        s += "".concat(this.vertices[i], " -> ");
+	        var neighbors = this.adjList.get(this.vertices[i]);
+
+	        for (var j = 0; j < neighbors.length; j++) {
+	          s += "".concat(neighbors[j], " ");
+	        }
+
+	        s += '\n';
+	      }
+
+	      return s;
+	    }
+	  }]);
+
+	  return Graph;
+	}();
+
 	/**
 	 * @file 数据结构
 	 * @author haoran
@@ -3365,7 +3777,8 @@ var main = (function () {
 	  StackFromObj: StackFromObj,
 	  Queue: Queue,
 	  Deque: Deque,
-	  BinarySearchTree: BinarySearchTree
+	  BinarySearchTree: BinarySearchTree,
+	  Graph: Graph
 	};
 
 	/**
@@ -3485,32 +3898,8 @@ var main = (function () {
 	  return i;
 	}
 
-	var defineProperty$4 = Object.defineProperty;
-	var cache = {};
-
-	var thrower = function (it) { throw it; };
-
-	var arrayMethodUsesToLength = function (METHOD_NAME, options) {
-	  if (has(cache, METHOD_NAME)) return cache[METHOD_NAME];
-	  if (!options) options = {};
-	  var method = [][METHOD_NAME];
-	  var ACCESSORS = has(options, 'ACCESSORS') ? options.ACCESSORS : false;
-	  var argument0 = has(options, 0) ? options[0] : thrower;
-	  var argument1 = has(options, 1) ? options[1] : undefined;
-
-	  return cache[METHOD_NAME] = !!method && !fails(function () {
-	    if (ACCESSORS && !descriptors) return true;
-	    var O = { length: -1 };
-
-	    if (ACCESSORS) defineProperty$4(O, 1, { enumerable: true, get: thrower });
-	    else O[1] = 1;
-
-	    method.call(O, argument0, argument1);
-	  });
-	};
-
-	var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('slice');
-	var USES_TO_LENGTH = arrayMethodUsesToLength('slice', { ACCESSORS: true, 0: 0, 1: 2 });
+	var HAS_SPECIES_SUPPORT$1 = arrayMethodHasSpeciesSupport('slice');
+	var USES_TO_LENGTH$2 = arrayMethodUsesToLength('slice', { ACCESSORS: true, 0: 0, 1: 2 });
 
 	var SPECIES$2 = wellKnownSymbol('species');
 	var nativeSlice = [].slice;
@@ -3519,7 +3908,7 @@ var main = (function () {
 	// `Array.prototype.slice` method
 	// https://tc39.github.io/ecma262/#sec-array.prototype.slice
 	// fallback for not array-like ES3 strings and DOM objects
-	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
+	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT$1 || !USES_TO_LENGTH$2 }, {
 	  slice: function slice(start, end) {
 	    var O = toIndexedObject(this);
 	    var length = toLength(O.length);
@@ -3549,11 +3938,11 @@ var main = (function () {
 
 	var slice = entryVirtual('Array').slice;
 
-	var ArrayPrototype$2 = Array.prototype;
+	var ArrayPrototype$4 = Array.prototype;
 
 	var slice_1 = function (it) {
 	  var own = it.slice;
-	  return it === ArrayPrototype$2 || (it instanceof Array && own === ArrayPrototype$2.slice) ? slice : own;
+	  return it === ArrayPrototype$4 || (it instanceof Array && own === ArrayPrototype$4.slice) ? slice : own;
 	};
 
 	var slice$1 = slice_1;
@@ -3633,17 +4022,81 @@ var main = (function () {
 	  return resArr;
 	}
 
+	/**
+	 * @file 广度优先遍历
+	 */
+	var Colors = {
+	  WHITE: 0,
+	  CREY: 1,
+	  BLACK: 2
+	};
+
+	var initializeColor = function initializeColor(vertices) {
+	  var color = {};
+
+	  for (var i = 0; i < vertices.length; i++) {
+	    color[vertices[i]] = Colors.WHITE;
+	  }
+
+	  return color;
+	};
+	/**
+	 * 广度优先遍历
+	 * @param {*} graph
+	 * @param {*} startVertex 
+	 * @param {*} callback 
+	 * @description 
+	 * 1. 创建一个队列Q
+	 * 2. 如果v为被发现的，将v入队列Q
+	 * 3. Q非空
+	 *   3.1 将 u 从 Q 中出队列；
+	 *   3.2 标注 u 为被发现的（灰色）；
+	 *   3.3 将 u 所有未被访问过的邻点（白色）入队列；
+	 *   3.4 标注 u 为已被探索的（黑色）。
+	 */
+
+
+	var breadthFirstSearch = function breadthFirstSearch(graph, startVertex, callback) {
+	  var vertices = graph.getVertices();
+	  var adjList = graph.getAdjList();
+	  var color = initializeColor(vertices);
+	  var queue = new Queue();
+	  queue.enqueue(startVertex);
+
+	  while (!queue.isEmpty()) {
+	    var u = queue.dequeue();
+	    var neighbors = adjList.get(u);
+	    color[u] = Colors.GREY;
+
+	    for (var i = 0; i < neighbors.length; i++) {
+	      var w = neighbors[i];
+
+	      if (color[w] === Colors.WHITE) {
+	        color[w] = Colors.GREY;
+	        queue.enqueue(w);
+	      }
+	    }
+
+	    color[u] = Colors.BLACK;
+
+	    if (callback) {
+	      callback(u);
+	    }
+	  }
+	};
+
 	var liquors = {
 	  bubbleSort: bubbleSort,
 	  quickSort: quickSort,
-	  mergeSort: mergeSort
+	  mergeSort: mergeSort,
+	  breadthFirstSearch: breadthFirstSearch
 	};
 
 	var entries = entryVirtual('Array').entries;
 
 	var entries$1 = entries;
 
-	var ArrayPrototype$3 = Array.prototype;
+	var ArrayPrototype$5 = Array.prototype;
 
 	var DOMIterables = {
 	  DOMTokenList: true,
@@ -3652,7 +4105,7 @@ var main = (function () {
 
 	var entries_1 = function (it) {
 	  var own = it.entries;
-	  return it === ArrayPrototype$3 || (it instanceof Array && own === ArrayPrototype$3.entries)
+	  return it === ArrayPrototype$5 || (it instanceof Array && own === ArrayPrototype$5.entries)
 	    // eslint-disable-next-line no-prototype-builtins
 	    || DOMIterables.hasOwnProperty(classof(it)) ? entries$1 : own;
 	};
@@ -3737,12 +4190,12 @@ var main = (function () {
 	 * 止水版本
 	 */
 	var isFunction = function isFunction(variable) {
-	  return typeof variable === 'function';
+	  return typeof variable === "function";
 	};
 
-	var PENDING = 'PENDING';
-	var FULFILLED = 'FULFILLED';
-	var REJECTED = 'REJECTED';
+	var PENDING = "PENDING";
+	var FULFILLED = "FULFILLED";
+	var REJECTED = "REJECTED";
 
 	var MyPromise = /*#__PURE__*/function () {
 	  function MyPromise(handle) {
@@ -3976,7 +4429,7 @@ var main = (function () {
 	  }]);
 
 	  return MyPromise;
-	}();
+	}(); // Object.defineProperty(Promise, "test", {
 
 	// import rum from './design-patterns';
 	var main = {
