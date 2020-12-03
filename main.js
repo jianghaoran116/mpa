@@ -3827,75 +3827,97 @@ var main = (function () {
 	  return resArr;
 	}
 
-	/**
-	 * @file 快速排序 
-	 * @author haoran
-	 */
-	// function quickSort(arr) {
-	//   if (arr.length <= 1) {
-	//     return arr;
-	//   }
-	//   let pivotIdx = Math.floor((arr.length - 1)/2)
-	//   let pivot = arr[pivotIdx];
-	//   let left = [];
-	//   let right = [];
-	//   arr.splice(pivotIdx, 1); // 删除支点
-	//   arr.forEach((item) => {
-	//     item < pivot
-	//       ? left.push(item)
-	//       : right.push(item)
-	//   });
-	//   return quickSort(left).concat([pivot], quickSort(right));
+	var swap$1 = function swap(array, from, to) {
+	  var _ref = [array[from], array[to]];
+	  array[to] = _ref[0];
+	  array[from] = _ref[1];
+	};
+
+	function judgeFun$1(pre, next) {
+	  return next - pre > 0;
+	} // export default function quickSort(array, judge = judgeFun) {
+	//   return quick(array, 0, array.length-1, judge);
 	// }
-	function swap$1(arr, from, to) {
-	  var _ref = [arr[to], arr[from]];
-	  arr[from] = _ref[0];
-	  arr[to] = _ref[1];
-	}
+	// function quick(array, left, right, judge) {
+	//   let index;
+	//   if (array.length > 1) {
+	//     index = partition(array, left, right, judge);
+	//     if (left < index-1) {
+	//       quick(array, left, index-1, judge);
+	//     }
+	//     if (index < right) {
+	//       quick(array, index, right, judge);
+	//     }
+	//   }
+	//   return array;
+	// }
+	// function partition(array, left, right, judge) {
+	//   let pivot = array[(left + right)>>1];
+	//   let i = left;
+	//   let j = right;
+	//   while(i <= j) {
+	//     while(judge(array[i], pivot)) {
+	//       i++;
+	//     }
+	//     while(judge(pivot, array[j])) {
+	//       j--;
+	//     }
+	//     if (i <= j) {
+	//       swap(array, i, j);
+	//       i++;
+	//       j--;
+	//     }
+	//   }
+	//   return i;
+	// }
 
-	function quickSort(arr) {
-	  quick(arr, 0, arr.length - 1);
-	}
 
-	function quick(arr, left, right) {
-	  var index;
-
-	  if (arr.length > 1) {
-	    index = partition(arr, left, right);
-
-	    if (left < index - 1) {
-	      quick(arr, left, index - 1);
-	    }
-
-	    if (right > index) {
-	      quick(arr, index, right);
-	    }
-	  }
-	}
-
-	function partition(arr, left, right) {
-	  var pivot = arr[Math.floor((left + right) / 2)];
+	function partition(array, left, right, judge) {
 	  var i = left;
 	  var j = right;
+	  var pivot = array[left + right >> 1];
 
 	  while (i <= j) {
-	    while (arr[i] < pivot) {
-	      i += 1;
+	    while (judge(array[i], pivot)) {
+	      i++;
 	    }
 
-	    while (arr[j] > pivot) {
-	      j -= 1;
-	    } // if (arr[i] > arr [j]) {
-
+	    while (judge(pivot, array[j])) {
+	      j--;
+	    }
 
 	    if (i <= j) {
-	      swap$1(arr, i, j);
-	      i += 1;
-	      j -= 1;
+	      swap$1(array, i, j);
+	      i++;
+	      j--;
 	    }
 	  }
 
 	  return i;
+	} // 左右指针
+
+
+	function quick(array, left, right, judge) {
+	  var index;
+
+	  if (array.length > 1) {
+	    index = partition(array, left, right, judge);
+
+	    if (left < index - 1) {
+	      quick(array, left, index - 1, judge);
+	    }
+
+	    if (index < right) {
+	      quick(array, index, right, judge);
+	    }
+	  }
+
+	  return array;
+	}
+
+	function quickSort(array) {
+	  var judge = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : judgeFun$1;
+	  return quick(array, 0, array.length - 1, judge);
 	}
 
 	var HAS_SPECIES_SUPPORT$1 = arrayMethodHasSpeciesSupport('slice');
@@ -4030,51 +4052,74 @@ var main = (function () {
 	//   }
 	//   return ret.concat(i < left.length ? left.slice(i) : right.slice(j));
 	// }
-	var merge = function merge(left, right) {
+	// var merge = function(left, right) {
+	//   let i = 0;
+	//   let j = 0;
+	//   const ret = [];
+	//   while(i < left.length && j < right.length) {
+	//     ret.push(
+	//       (left[i] - right[j] > 0) ? left[i++] : right[j++]
+	//     );
+	//   }
+	//   return ret.concat(i < left.length ? left.slice(i) : right.slice(j));
+	// }
+	// var mergeSortRec = function(array) {
+	//   if (array.length > 1) {
+	//     console.log('array:::', array);
+	//     let mid = array.length >> 1;
+	//     let left = mergeSortRec(array.slice(0, mid));
+	//     let right = mergeSortRec(array.slice(mid, array.length));
+	//     array = merge(left, right);
+	//   }
+	//   return array;
+	// }
+	// /**
+	//  * @param {number[]} nums1
+	//  * @param {number} m
+	//  * @param {number[]} nums2
+	//  * @param {number} n
+	//  * @return {void} Do not return anything, modify nums1 in-place instead.
+	//  */
+	// var mergeSort = function(nums1, m, nums2, n) {
+	//   // nums1 = [];
+	//   // let res = []
+	//   let res = mergeSortRec(nums1.slice(0, m).concat(nums2.slice(0, n)));
+	//   console.log(res)
+	//   // nums1 = [...res];
+	//   // console.log(nums1)
+	//   // l = m + n, m--, n--
+	//   //   while(l--) {
+	//   //       nums1[l] = (nums2[n] === undefined ? -Infinity : nums2[n]) >= (nums1[m] === undefined ? -Infinity : nums1[m]) ? nums2[n--] : nums1[m--]
+	//   //   }
+	// };
+	function judgeFun$2(prev, next) {
+	  return next - prev > 0;
+	}
+
+	function merge(left, right, judge) {
 	  var i = 0;
 	  var j = 0;
 	  var ret = [];
 
 	  while (i < left.length && j < right.length) {
-	    ret.push(left[i] - right[j] > 0 ? left[i++] : right[j++]);
+	    ret.push(judge(left[i], right[j]) ? left[i++] : right[j++]);
 	  }
 
 	  return concat$2(ret).call(ret, i < left.length ? slice$2(left).call(left, i) : slice$2(right).call(right, j));
-	};
+	}
 
-	var mergeSortRec = function mergeSortRec(array) {
+	function mergeSort(array) {
+	  var judge = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : judgeFun$2;
+
 	  if (array.length > 1) {
-	    console.log('array:::', array);
 	    var mid = array.length >> 1;
-	    var left = mergeSortRec(slice$2(array).call(array, 0, mid));
-	    var right = mergeSortRec(slice$2(array).call(array, mid, array.length));
-	    array = merge(left, right);
+	    var leftArray = mergeSort(slice$2(array).call(array, 0, mid), judge);
+	    var rightArray = mergeSort(slice$2(array).call(array, mid), judge);
+	    array = merge(leftArray, rightArray, judge);
 	  }
 
 	  return array;
-	};
-	/**
-	 * @param {number[]} nums1
-	 * @param {number} m
-	 * @param {number[]} nums2
-	 * @param {number} n
-	 * @return {void} Do not return anything, modify nums1 in-place instead.
-	 */
-
-
-	var mergeSort = function mergeSort(nums1, m, nums2, n) {
-	  var _context;
-
-	  // nums1 = [];
-	  // let res = []
-	  var res = mergeSortRec(concat$2(_context = slice$2(nums1).call(nums1, 0, m)).call(_context, slice$2(nums2).call(nums2, 0, n)));
-	  console.log(res); // nums1 = [...res];
-	  // console.log(nums1)
-	  // l = m + n, m--, n--
-	  //   while(l--) {
-	  //       nums1[l] = (nums2[n] === undefined ? -Infinity : nums2[n]) >= (nums1[m] === undefined ? -Infinity : nums1[m]) ? nums2[n--] : nums1[m--]
-	  //   }
-	};
+	}
 
 	/**
 	 * @file 广度优先遍历

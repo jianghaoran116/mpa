@@ -89,49 +89,82 @@
 // }
 
 
-var merge = function(left, right) {
+// var merge = function(left, right) {
+//   let i = 0;
+//   let j = 0;
+//   const ret = [];
+
+//   while(i < left.length && j < right.length) {
+//     ret.push(
+//       (left[i] - right[j] > 0) ? left[i++] : right[j++]
+//     );
+//   }
+
+//   return ret.concat(i < left.length ? left.slice(i) : right.slice(j));
+// }
+
+// var mergeSortRec = function(array) {
+//   if (array.length > 1) {
+//     console.log('array:::', array);
+//     let mid = array.length >> 1;
+//     let left = mergeSortRec(array.slice(0, mid));
+//     let right = mergeSortRec(array.slice(mid, array.length));
+//     array = merge(left, right);
+//   }
+//   return array;
+// }
+
+// /**
+//  * @param {number[]} nums1
+//  * @param {number} m
+//  * @param {number[]} nums2
+//  * @param {number} n
+//  * @return {void} Do not return anything, modify nums1 in-place instead.
+//  */
+// var mergeSort = function(nums1, m, nums2, n) {
+//   // nums1 = [];
+//   // let res = []
+//   let res = mergeSortRec(nums1.slice(0, m).concat(nums2.slice(0, n)));
+//   console.log(res)
+//   // nums1 = [...res];
+//   // console.log(nums1)
+//   // l = m + n, m--, n--
+//   //   while(l--) {
+//   //       nums1[l] = (nums2[n] === undefined ? -Infinity : nums2[n]) >= (nums1[m] === undefined ? -Infinity : nums1[m]) ? nums2[n--] : nums1[m--]
+//   //   }
+// };
+
+function judgeFun(prev, next) {
+  return next - prev > 0;
+}
+
+function merge(left, right, judge) {
   let i = 0;
   let j = 0;
-  const ret = [];
+  let ret = [];
 
   while(i < left.length && j < right.length) {
     ret.push(
-      (left[i] - right[j] > 0) ? left[i++] : right[j++]
+      judge(left[i], right[j]) ? left[i++] : right[j++]
     );
   }
 
-  return ret.concat(i < left.length ? left.slice(i) : right.slice(j));
+  return ret.concat(
+    i < left.length ? left.slice(i) : right.slice(j)
+  )
+
 }
 
-var mergeSortRec = function(array) {
+function mergeSort(array, judge = judgeFun) {
   if (array.length > 1) {
-    console.log('array:::', array);
     let mid = array.length >> 1;
-    let left = mergeSortRec(array.slice(0, mid));
-    let right = mergeSortRec(array.slice(mid, array.length));
-    array = merge(left, right);
+    let leftArray = mergeSort(array.slice(0, mid), judge);
+    let rightArray = mergeSort(array.slice(mid), judge);
+    array = merge(leftArray, rightArray, judge);
   }
+
   return array;
 }
 
-/**
- * @param {number[]} nums1
- * @param {number} m
- * @param {number[]} nums2
- * @param {number} n
- * @return {void} Do not return anything, modify nums1 in-place instead.
- */
-var mergeSort = function(nums1, m, nums2, n) {
-  // nums1 = [];
-  // let res = []
-  let res = mergeSortRec(nums1.slice(0, m).concat(nums2.slice(0, n)));
-  console.log(res)
-  // nums1 = [...res];
-  // console.log(nums1)
-  // l = m + n, m--, n--
-  //   while(l--) {
-  //       nums1[l] = (nums2[n] === undefined ? -Infinity : nums2[n]) >= (nums1[m] === undefined ? -Infinity : nums1[m]) ? nums2[n--] : nums1[m--]
-  //   }
-};
 
 export default mergeSort;

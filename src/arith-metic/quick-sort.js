@@ -1,75 +1,98 @@
-/**
- * @file 快速排序 
- * @author haoran
- */
+const swap = function(array, from, to) {
+  [array[to], array[from]] = [array[from], array[to]]
+}
 
-// function quickSort(arr) {
-//   if (arr.length <= 1) {
-//     return arr;
-//   }
+function judgeFun(pre, next) {
+  return next - pre > 0;
+}
 
-//   let pivotIdx = Math.floor((arr.length - 1)/2)
-//   let pivot = arr[pivotIdx];
-//   let left = [];
-//   let right = [];
-
-//   arr.splice(pivotIdx, 1); // 删除支点
-//   arr.forEach((item) => {
-//     item < pivot
-//       ? left.push(item)
-//       : right.push(item)
-//   });
-
-//   return quickSort(left).concat([pivot], quickSort(right));
+// export default function quickSort(array, judge = judgeFun) {
+//   return quick(array, 0, array.length-1, judge);
 // }
 
-function swap(arr, from, to) {
-  [arr[from], arr[to]] = [arr[to], arr[from]];
-}
+// function quick(array, left, right, judge) {
+//   let index;
+//   if (array.length > 1) {
+//     index = partition(array, left, right, judge);
+  
+//     if (left < index-1) {
+//       quick(array, left, index-1, judge);
+//     }
+  
+//     if (index < right) {
+//       quick(array, index, right, judge);
+//     }
+//   }
 
-function quickSort(arr) {
-  quick(arr, 0, arr.length - 1);
-}
+//   return array;
+// }
 
-function quick(arr, left, right) {
-  let index;
+// function partition(array, left, right, judge) {
+//   let pivot = array[(left + right)>>1];
+//   let i = left;
+//   let j = right;
 
-  if (arr.length > 1) {
-    index = partition(arr, left, right);
+//   while(i <= j) {
+//     while(judge(array[i], pivot)) {
+//       i++;
+//     }
+//     while(judge(pivot, array[j])) {
+//       j--;
+//     }
+//     if (i <= j) {
+//       swap(array, i, j);
+//       i++;
+//       j--;
+//     }
+//   }
 
-    if (left < index-1) {
-      quick(arr, left, index-1);
-    }
+//   return i;
+// }
 
-    if (right > index) {
-      quick(arr, index, right);
-    }
-  }
-}
-
-function partition(arr, left, right) {
-  let pivot = arr[Math.floor((left + right)/2)];
+function partition(array, left, right, judge) {
   let i = left;
   let j = right;
+  let pivot = array[(left + right) >> 1];
 
   while (i <= j) {
-    while (arr[i] < pivot) {
-      i += 1;
+    while (judge(array[i], pivot)) {
+      i++;
     }
 
-    while (arr[j] > pivot) {
-      j -= 1;
+    while (judge(pivot, array[j])) {
+      j--;
     }
 
-    // if (arr[i] > arr [j]) {
     if (i <= j) {
-      swap(arr, i, j);
-      i += 1;
-      j -= 1;
+      swap(array, i, j);
+      i++;
+      j--;
     }
   }
 
   return i;
+}
+
+// 左右指针
+function quick(array, left, right, judge) {
+  let index;
+  if (array.length > 1) {
+    index = partition(array, left, right, judge);
+    if (left < index - 1) {
+      quick(array, left, index-1, judge);
+    }
+
+    if (index < right) {
+      quick(array, index, right, judge);
+    }
+  }
+
+  return array;
+}
+
+
+function quickSort(array, judge = judgeFun) {
+  return quick(array, 0, array.length - 1, judge);
 }
 
 export default quickSort;

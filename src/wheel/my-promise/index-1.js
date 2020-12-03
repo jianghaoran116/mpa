@@ -8,16 +8,18 @@ const REJECTED = 'REJECTED';
 class MyPromise {
   constructor(handler) {
     this._state = PENDING;
-    this._value = null;
-    this._fulfilledQueues = [];
-    this._rejectedQueues = [];
+    this._values = null;
+    this.fulfilledQueues = [];
+    this.rejectedQueues = [];
 
-    handler(this._resolve.bind(this), this._reject.bind(this));
+    if (isFunction(handler)) {
+      handler(this._resolve.bind(this), this._reject.bind(this));
+    }
   }
 
   _resolve(val) {
     const run = () => {
-      if (this.state !== PENDING) return;
+      
     }
 
     setTimeout(run, 0)
@@ -25,46 +27,13 @@ class MyPromise {
 
   _reject(err) {
     const run = () => {
-      this._value = err;
-      this._state = REJECTED;
-      let cb;
-      while(cb = this._rejectedQueues.shift()) {
-        cb(err);
-      }
+
     }
 
     setTimeout(run, 0)
   }
 
   then(onFulfilled, onRejected) {
-    const {
-      _value,
-      _status,
-    } = this;
-    return new MyPromise((onFulfilledNext, onRejectedNext) => {
-
-      let fulfilled = value => {
-
-      }
-
-      let rejected = err => {
-        
-      }
-
-      switch(_status) {
-        case PENDING:
-          this._fulfilledQueues.push(fulfilled);
-          this._rejectedQueues.push(rejected);
-          break;
-        case FULFILLED:
-          fulfilled(_value);
-          break;
-        case REJECTED:
-          rejected(_value);
-          break;
-      }
-
-    })
   }
 
   catch() {
