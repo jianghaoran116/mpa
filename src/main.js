@@ -13,9 +13,11 @@
 import DS from './datastructures/index';
 import liquors from './arith-metic';
 import MyPromise from './wheel/my-promise';
+import Smobx from './s-mobx/s-mobx'
 
 export default {
   DS,
   MyPromise,
   liquors,
+  Smobx
 }

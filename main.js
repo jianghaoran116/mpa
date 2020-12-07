@@ -1556,6 +1556,22 @@ var main = (function () {
 
 	var concat$2 = concat$1;
 
+	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    _typeof = function (obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    _typeof = function (obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
 	function _classCallCheck(instance, Constructor) {
 	  if (!(instance instanceof Constructor)) {
 	    throw new TypeError("Cannot call a class as a function");
@@ -4530,11 +4546,272 @@ var main = (function () {
 	  return MyPromise;
 	}(); // Object.defineProperty(Promise, "test", {
 
+	// `Array.isArray` method
+	// https://tc39.github.io/ecma262/#sec-array.isarray
+	_export({ target: 'Array', stat: true }, {
+	  isArray: isArray
+	});
+
+	var isArray$1 = path.Array.isArray;
+
+	var isArray$2 = isArray$1;
+
+	var isArray$3 = isArray$2;
+
+	var arrayMethodIsStrict = function (METHOD_NAME, argument) {
+	  var method = [][METHOD_NAME];
+	  return !!method && fails(function () {
+	    // eslint-disable-next-line no-useless-call,no-throw-literal
+	    method.call(null, argument || function () { throw 1; }, 1);
+	  });
+	};
+
+	var $forEach$1 = arrayIteration.forEach;
+
+
+
+	var STRICT_METHOD = arrayMethodIsStrict('forEach');
+	var USES_TO_LENGTH$3 = arrayMethodUsesToLength('forEach');
+
+	// `Array.prototype.forEach` method implementation
+	// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+	var arrayForEach = (!STRICT_METHOD || !USES_TO_LENGTH$3) ? function forEach(callbackfn /* , thisArg */) {
+	  return $forEach$1(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	} : [].forEach;
+
+	// `Array.prototype.forEach` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+	_export({ target: 'Array', proto: true, forced: [].forEach != arrayForEach }, {
+	  forEach: arrayForEach
+	});
+
+	var forEach$1 = entryVirtual('Array').forEach;
+
+	var forEach$2 = forEach$1;
+
+	var ArrayPrototype$6 = Array.prototype;
+
+	var DOMIterables$1 = {
+	  DOMTokenList: true,
+	  NodeList: true
+	};
+
+	var forEach_1 = function (it) {
+	  var own = it.forEach;
+	  return it === ArrayPrototype$6 || (it instanceof Array && own === ArrayPrototype$6.forEach)
+	    // eslint-disable-next-line no-prototype-builtins
+	    || DOMIterables$1.hasOwnProperty(classof(it)) ? forEach$2 : own;
+	};
+
+	var forEach$3 = forEach_1;
+
+	var nowObserver = null;
+	var nowTarget = null;
+	var observerStack = [];
+	var targetStack = []; // eslint-disable-next-line no-unused-vars
+	var dependenceManager = {
+	  /**
+	   * 存储所有observable和handler的映射关系
+	   */
+	  _store: {},
+
+	  /**
+	   * 填一个当前栈中的依赖到 store 中
+	   */
+	  _addNowObserver: function _addNowObserver(obID) {
+	    this._store[obID] = this._store[obID] || {};
+	    this._store[obID].target = nowTarget;
+	    this._store[obID].watchers = this._store[obID].watchers || [];
+
+	    this._store[obID].watchers.push(nowObserver);
+
+	    console.log("".concat(obID, "-wathers:::"), this._store[obID].watchers);
+	  },
+
+	  /**
+	   * 收集依赖
+	   */
+	  collect: function collect(obID) {
+	    if (nowObserver) {
+	      this._addNowObserver(obID);
+	    }
+
+	    return false;
+	  },
+
+	  /**
+	   * 触发依赖
+	   * @param {*} obId
+	   */
+	  trigger: function trigger(id) {
+	    var _this = this;
+
+	    var ds = this._store[id];
+
+	    if (ds && ds.watchers) {
+	      var _context;
+
+	      forEach$3(_context = ds.watchers).call(_context, function (d) {
+	        d.call(ds.target || _this);
+	      });
+	    }
+	  },
+
+	  /**
+	   * 开始收集依赖
+	   * @param observer
+	   * @param target
+	   */
+	  beginCollect: function beginCollect(observer, target) {
+	    observerStack.push(observer);
+	    targetStack.push(target);
+	    nowObserver = observerStack.length > 0 ? observerStack[observerStack.length - 1] : null;
+	    nowTarget = targetStack.length > 0 ? targetStack[targetStack.length - 1] : null;
+	    console.log("begin store:::", this._store);
+	    console.log("begin nowObserver", nowObserver);
+	  },
+	  endCollect: function endCollect() {
+	    observerStack.pop();
+	    targetStack.pop();
+	    nowObserver = observerStack.length > 0 ? observerStack[observerStack.length - 1] : null;
+	    nowTarget = targetStack.length > 0 ? targetStack[targetStack.length - 1] : null;
+	    console.log("end store:::", this._store);
+	    console.log("end nowObserver", nowObserver);
+	  }
+	};
+
+	var obIDCounter = 1;
+
+	var Observable = /*#__PURE__*/function () {
+	  /**
+	   * 全局唯一 id
+	   * @type {number}
+	   */
+
+	  /**
+	   * 真实值
+	   * @type {null}
+	   */
+	  function Observable(v) {
+	    _classCallCheck(this, Observable);
+
+	    _defineProperty(this, "obID", 0);
+
+	    _defineProperty(this, "value", null);
+
+	    this.obID = "ob-" + ++obIDCounter;
+
+	    if (isArray$3(v)) {
+	      this._wrapArrayProxy(v);
+	    } else {
+	      this.value = v;
+	    }
+	  }
+
+	  _createClass(Observable, [{
+	    key: "get",
+	    value: function get() {
+	      // 添加依赖
+	      dependenceManager.collect(this.obID);
+	      return this.value;
+	    }
+	  }, {
+	    key: "set",
+	    value: function set(v) {
+	      if (isArray$3(v)) {
+	        this._wrapArrayProxy(v);
+	      } else {
+	        this.value = v;
+	      } // 触发依赖
+
+
+	      dependenceManager.trigger(this.obID);
+	    }
+	    /**
+	     * 手动触发依赖
+	     */
+
+	  }, {
+	    key: "trigger",
+	    value: function trigger() {
+	      dependenceManager.trigger(this.obID);
+	    }
+	    /**
+	     * 对数组包装Proxy拦截数组操作的动作
+	     */
+
+	  }, {
+	    key: "_wrapArrayProxy",
+	    value: function _wrapArrayProxy(v) {
+	      var _this = this;
+
+	      this.value = new Proxy(v, {
+	        set: function set(obj, key, value) {
+	          obj[key] = value;
+
+	          if (key != "length") {
+	            _this.trigger();
+	          }
+
+	          return true;
+	        }
+	      });
+	    }
+	  }]);
+
+	  return Observable;
+	}();
+
+	/**
+	 * 包装 observable 属性
+	 * @param target
+	 * @param name
+	 * @param descriptor
+	 * @returns {{enumerable: boolean, configurable: boolean, get: get, set: set}}
+	 * @description 核心原理是Object.defineProperty(obj, prop, descriptor)
+	 * 有意思的是 descriptor 参数，它其实也是一个对象，其字段决定了 obj 的prop 属性的一些特性
+	 */
+
+	function observable(target, name, descriptor) {
+	  var v = descriptor.initializer.call(this); // 如果值是对象，为其值也创建observable
+
+	  if (_typeof(v) === "object") ;
+
+	  var observable = new Observable(v); // 相同的属性只会实例化一次 - 一个属性就会对应一个ID
+
+	  return {
+	    enumerable: true,
+	    configurable: true,
+	    get: function get() {
+	      return observable.get();
+	    },
+	    set: function set(v) {
+	      // 重新赋值对象的时候，为其值也创建observable
+	      if (_typeof(v) === "object") ;
+
+	      return observable.set(v);
+	    }
+	  };
+	}
+
+	var autorun = function autorun(handler) {
+	  //收集依赖
+	  dependenceManager.beginCollect(handler);
+	  handler();
+	  dependenceManager.endCollect();
+	};
+
+	var Smobx = {
+	  observable: observable,
+	  autorun: autorun
+	};
+
 	// import rum from './design-patterns';
 	var main = {
 	  DS: DS,
 	  MyPromise: MyPromise,
-	  liquors: liquors
+	  liquors: liquors,
+	  Smobx: Smobx
 	};
 
 	return main;
