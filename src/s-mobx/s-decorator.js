@@ -1,5 +1,5 @@
 import Observable from './s-observable';
-// import {createObservable} from './s-extendObservable';
+import { createObservable } from './s-extendObservable';
 
 /**
  * 包装 observable 属性
@@ -14,7 +14,7 @@ function observable(target, name, descriptor) {
   var v = descriptor.initializer.call(this);
   // 如果值是对象，为其值也创建observable
   if (typeof v === "object") {
-    // createObservable(v);
+    createObservable(v);
   }
   var observable = new Observable(v); // 相同的属性只会实例化一次 - 一个属性就会对应一个ID
   return {
@@ -26,7 +26,7 @@ function observable(target, name, descriptor) {
     set: function (v) {
       // 重新赋值对象的时候，为其值也创建observable
       if (typeof v === "object") {
-        // createObservable(v);
+        createObservable(v);
       }
       return observable.set(v);
     },

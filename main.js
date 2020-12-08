@@ -4762,6 +4762,60 @@ var main = (function () {
 	  return Observable;
 	}();
 
+	// `Object.defineProperty` method
+	// https://tc39.github.io/ecma262/#sec-object.defineproperty
+	_export({ target: 'Object', stat: true, forced: !descriptors, sham: !descriptors }, {
+	  defineProperty: objectDefineProperty.f
+	});
+
+	var defineProperty_1 = createCommonjsModule(function (module) {
+	var Object = path.Object;
+
+	var defineProperty = module.exports = function defineProperty(it, key, desc) {
+	  return Object.defineProperty(it, key, desc);
+	};
+
+	if (Object.defineProperty.sham) defineProperty.sham = true;
+	});
+
+	var defineProperty$5 = defineProperty_1;
+
+	var defineProperty$6 = defineProperty$5;
+
+	/**
+	 * 值类型 Observable
+	 */
+
+	var createObservableProperty = function createObservableProperty(target, property) {
+	  var observable = new Observable(target[property]);
+
+	  defineProperty$6(target, property, {
+	    get: function get() {
+	      return observable.get();
+	    },
+	    set: function set(value) {
+	      return observable.set(value);
+	    }
+	  }); //递归包装 observable
+
+
+	  if (_typeof(target[property]) === "object") {
+	    for (var i in target[property]) {
+	      if (Object.prototype.hasOwnProperty.call(target[property], i)) {
+	        createObservableProperty(target[property], i);
+	      }
+	    }
+	  }
+	};
+
+	var createObservable = function createObservable(target) {
+	  for (var i in target) {
+	    if (Object.prototype.hasOwnProperty.call(target, i)) {
+	      createObservableProperty(target, i);
+	    }
+	  }
+	};
+
 	/**
 	 * 包装 observable 属性
 	 * @param target
@@ -4775,7 +4829,9 @@ var main = (function () {
 	function observable(target, name, descriptor) {
 	  var v = descriptor.initializer.call(this); // 如果值是对象，为其值也创建observable
 
-	  if (_typeof(v) === "object") ;
+	  if (_typeof(v) === "object") {
+	    createObservable(v);
+	  }
 
 	  var observable = new Observable(v); // 相同的属性只会实例化一次 - 一个属性就会对应一个ID
 
@@ -4787,7 +4843,9 @@ var main = (function () {
 	    },
 	    set: function set(v) {
 	      // 重新赋值对象的时候，为其值也创建observable
-	      if (_typeof(v) === "object") ;
+	      if (_typeof(v) === "object") {
+	        createObservable(v);
+	      }
 
 	      return observable.set(v);
 	    }
