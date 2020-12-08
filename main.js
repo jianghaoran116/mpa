@@ -4806,12 +4806,41 @@ var main = (function () {
 	  autorun: autorun
 	};
 
+	var Component = function Component() {
+	  _classCallCheck(this, Component);
+
+	  console.log('Component');
+	};
+
+	var createElement = function createElement() {
+	  console.log('createElement');
+	};
+
+	var React = {
+	  Component: Component,
+	  createElement: createElement
+	};
+
+	var render = function render() {
+	  console.log('render');
+	};
+
+	var ReactDOM = {
+	  render: render
+	};
+
+	var Sreact = {
+	  React: React,
+	  ReactDOM: ReactDOM
+	};
+
 	// import rum from './design-patterns';
 	var main = {
 	  DS: DS,
 	  MyPromise: MyPromise,
 	  liquors: liquors,
-	  Smobx: Smobx
+	  Smobx: Smobx,
+	  Sreact: Sreact
 	};
 
 	return main;

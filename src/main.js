@@ -13,11 +13,13 @@
 import DS from './datastructures/index';
 import liquors from './arith-metic';
 import MyPromise from './wheel/my-promise';
-import Smobx from './s-mobx/s-mobx'
+import Smobx from './s-mobx/s-mobx';
+import Sreact from './s-react/index.js';
 
 export default {
   DS,
   MyPromise,
   liquors,
-  Smobx
+  Smobx,
+  Sreact
 }
