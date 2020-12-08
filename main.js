@@ -4892,13 +4892,378 @@ var main = (function () {
 	  ReactDOM: ReactDOM
 	};
 
+	var $filter = arrayIteration.filter;
+
+
+
+	var HAS_SPECIES_SUPPORT$2 = arrayMethodHasSpeciesSupport('filter');
+	// Edge 14- issue
+	var USES_TO_LENGTH$4 = arrayMethodUsesToLength('filter');
+
+	// `Array.prototype.filter` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.filter
+	// with adding support of @@species
+	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT$2 || !USES_TO_LENGTH$4 }, {
+	  filter: function filter(callbackfn /* , thisArg */) {
+	    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var filter = entryVirtual('Array').filter;
+
+	var ArrayPrototype$7 = Array.prototype;
+
+	var filter_1 = function (it) {
+	  var own = it.filter;
+	  return it === ArrayPrototype$7 || (it instanceof Array && own === ArrayPrototype$7.filter) ? filter : own;
+	};
+
+	var filter$1 = filter_1;
+
+	var filter$2 = filter$1;
+
+	/**
+	 * @file 订阅发布器
+	 * @author haoran
+	 */
+
+	/**
+	 * 二维数组 保存监听的数组
+	 */
+	var QueuePool = /*#__PURE__*/function () {
+	  function QueuePool() {
+	    _classCallCheck(this, QueuePool);
+
+	    this.pool = [];
+	  }
+
+	  _createClass(QueuePool, [{
+	    key: "get",
+	    value: function get(namespace) {
+	      if (!this.pool[namespace]) {
+	        this.pool[namespace] = [];
+	      }
+
+	      return this.pool[namespace];
+	    }
+	  }, {
+	    key: "has",
+	    value: function has(namespace) {
+	      return !!this.pool[namespace];
+	    }
+	  }, {
+	    key: "del",
+	    value: function del(namespace, item) {
+	      if (!item) {
+	        this.pool[namespace] = [];
+	      } else {
+	        var _context;
+
+	        this.pool[namespace] = filter$2(_context = this.pool[namespace]).call(_context, function (originItem) {
+	          return originItem !== item;
+	        });
+	      }
+	    }
+	  }, {
+	    key: "pushto",
+	    value: function pushto(namespace, item) {
+	      this.get(namespace).push(item);
+	    }
+	  }]);
+
+	  return QueuePool;
+	}();
+	/**
+	 * observer类
+	 */
+
+
+	var Observer = /*#__PURE__*/function () {
+	  function Observer() {
+	    _classCallCheck(this, Observer);
+
+	    this.handlers = new QueuePool();
+	    this.messages = new QueuePool();
+	  }
+
+	  _createClass(Observer, [{
+	    key: "notify",
+	    value: function notify(namespace, message) {
+	      var _context2;
+
+	      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	      forEach$3(_context2 = this.handlers.get(namespace)).call(_context2, function (handler) {
+	        return handler && handler(message);
+	      });
+
+	      if (!options.once) {
+	        this.messages.pushto(namespace, message);
+	      }
+
+	      return this;
+	    }
+	  }, {
+	    key: "addSub",
+	    value: function addSub(namespace, subHandler) {
+	      var _this = this;
+
+	      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	      if (Object.prototype.toString.call(namespace) === '[object Array]') {
+	        forEach$3(namespace).call(namespace, function (nameItem) {
+	          return _this.addSub(nameItem, subHandler, options);
+	        });
+
+	        return this;
+	      }
+
+	      this.handlers.pushto(namespace, this.handlerProxy(namespace, subHandler, options = {}));
+
+	      if (options.detectPrevious && this.messages.has(namespace)) {
+	        var message = this.messages.get(namespace);
+	        this.handlerProxy(namespace, subHandler, options.once)(message);
+	      }
+
+	      return this;
+	    }
+	  }, {
+	    key: "removeSub",
+	    value: function removeSub(namspace, handler) {
+	      this.handlers.del(namspace, handler);
+	      return this;
+	    }
+	  }, {
+	    key: "handlerProxy",
+	    value: function handlerProxy(namespace, handler, once) {
+	      var _this2 = this;
+
+	      var proxyHandler = function proxyHandler(message) {
+	        if (once) {
+	          _this2.removeSub(namespace, proxyHandler);
+	        }
+
+	        return handler.call(_this2, message);
+	      };
+
+	      return proxyHandler;
+	    }
+	  }], [{
+	    key: "get",
+	    value: function get() {
+	      if (!Observer.instance) {
+	        Observer.instance = new Observer();
+	      }
+
+	      return Observer.instance;
+	    }
+	  }]);
+
+	  return Observer;
+	}();
+
+	var min$4 = Math.min;
+	var nativeLastIndexOf = [].lastIndexOf;
+	var NEGATIVE_ZERO = !!nativeLastIndexOf && 1 / [1].lastIndexOf(1, -0) < 0;
+	var STRICT_METHOD$1 = arrayMethodIsStrict('lastIndexOf');
+	// For preventing possible almost infinite loop in non-standard implementations, test the forward version of the method
+	var USES_TO_LENGTH$5 = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+	var FORCED$1 = NEGATIVE_ZERO || !STRICT_METHOD$1 || !USES_TO_LENGTH$5;
+
+	// `Array.prototype.lastIndexOf` method implementation
+	// https://tc39.github.io/ecma262/#sec-array.prototype.lastindexof
+	var arrayLastIndexOf = FORCED$1 ? function lastIndexOf(searchElement /* , fromIndex = @[*-1] */) {
+	  // convert -0 to +0
+	  if (NEGATIVE_ZERO) return nativeLastIndexOf.apply(this, arguments) || 0;
+	  var O = toIndexedObject(this);
+	  var length = toLength(O.length);
+	  var index = length - 1;
+	  if (arguments.length > 1) index = min$4(index, toInteger(arguments[1]));
+	  if (index < 0) index = length + index;
+	  for (;index >= 0; index--) if (index in O && O[index] === searchElement) return index || 0;
+	  return -1;
+	} : nativeLastIndexOf;
+
+	// `Array.prototype.lastIndexOf` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.lastindexof
+	_export({ target: 'Array', proto: true, forced: arrayLastIndexOf !== [].lastIndexOf }, {
+	  lastIndexOf: arrayLastIndexOf
+	});
+
+	var lastIndexOf = entryVirtual('Array').lastIndexOf;
+
+	var ArrayPrototype$8 = Array.prototype;
+
+	var lastIndexOf_1 = function (it) {
+	  var own = it.lastIndexOf;
+	  return it === ArrayPrototype$8 || (it instanceof Array && own === ArrayPrototype$8.lastIndexOf) ? lastIndexOf : own;
+	};
+
+	var lastIndexOf$1 = lastIndexOf_1;
+
+	var lastIndexOf$2 = lastIndexOf$1;
+
+	/**
+	 * @file 订阅发布器
+	 * @author haoran
+	 */
+	var PubSub = function PubSub() {
+	  var _this = this;
+
+	  _classCallCheck(this, PubSub);
+
+	  _message.set(this, {
+	    writable: true,
+	    value: {}
+	  });
+
+	  _lastUid.set(this, {
+	    writable: true,
+	    value: -1
+	  });
+
+	  _ALL_SUBSCRIBING_MSG.set(this, {
+	    writable: true,
+	    value: "*"
+	  });
+
+	  _defineProperty(this, "hasKeys", function (obj) {
+	    var key;
+
+	    for (key in obj) {
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        return true;
+	      }
+	    }
+
+	    return false;
+	  });
+
+	  _defineProperty(this, "throwException", function (ex) {
+	    return function reThrowException() {
+	      throw ex;
+	    };
+	  });
+
+	  _defineProperty(this, "callSubscriberWithDelayed", function (subscriber, message, data) {
+	    try {
+	      subscriber(message, data);
+	    } catch (ex) {
+	      setTimeout$1(_this.throwException(ex), 0);
+	    }
+	  });
+
+	  _defineProperty(this, "callSubscriberWithImmediateExceptions", function (subscriber, message, data) {
+	    subscriber(message, data);
+	  });
+
+	  _defineProperty(this, "deliverMessage", function (originalMessage, matchedMessage, data, immediateExceptions) {
+	    var subscribers = _this.messages[matchedMessage],
+	        callSubscriber = immediateExceptions ? _this.callSubscriberWithImmediateExceptions : _this.callSubscriberWithDelayedExceptions,
+	        s;
+
+	    if (!Object.prototype.hasOwnProperty.call(_this.messages, matchedMessage)) {
+	      return;
+	    }
+
+	    for (s in subscribers) {
+	      if (Object.prototype.hasOwnProperty.call(subscribers, s)) {
+	        callSubscriber(subscribers[s], originalMessage, data);
+	      }
+	    }
+	  });
+
+	  _defineProperty(this, "createDeliveryFunction", function (message, data, immediateExceptions) {
+	    return function deliverNamespaced() {
+	      var topic = String(message),
+	          position = lastIndexOf$2(topic).call(topic, '.'); // deliver the message as it is now
+
+
+	      this.deliverMessage(message, message, data, immediateExceptions); // trim the hierarchy and deliver message to each level
+
+	      while (position !== -1) {
+	        topic = topic.substr(0, position);
+	        position = lastIndexOf$2(topic).call(topic, '.');
+	        this.deliverMessage(message, topic, data, immediateExceptions);
+	      }
+
+	      this.deliverMessage(message, this.ALL_SUBSCRIBING_MSG, data, immediateExceptions);
+	    };
+	  });
+
+	  _defineProperty(this, "hasDirectSubscribersFor", function (message) {
+	    var topic = String(message),
+	        found = Boolean(Object.prototype.hasOwnProperty.call(_this.messages, topic) && _this.hasKeys(_this.messages[topic]));
+	    return found;
+	  });
+
+	  _defineProperty(this, "messageHasSubscribers", function (message) {
+	    var topic = String(message),
+	        found = _this.hasDirectSubscribersFor(topic) || _this.hasDirectSubscribersFor(_this.ALL_SUBSCRIBING_MSG),
+	        position = lastIndexOf$2(topic).call(topic, '.');
+
+	    while (!found && position !== -1) {
+	      topic = topic.substr(0, position);
+	      position = lastIndexOf$2(topic).call(topic, '.');
+	      found = _this.hasDirectSubscribersFor(topic);
+	    }
+
+	    return found;
+	  });
+
+	  _defineProperty(this, "_publish", function (message, data, sync, immediateExceptions) {
+	    message = _typeof(message) === 'symbol' ? message.toString() : message;
+
+	    var deliver = _this.createDeliveryFunction(message, data, immediateExceptions),
+	        hasSubscribers = _this.messageHasSubscribers(message);
+
+	    if (!hasSubscribers) {
+	      return false;
+	    }
+
+	    if (sync === true) {
+	      deliver();
+	    } else {
+	      setTimeout$1(deliver, 0);
+	    }
+
+	    return true;
+	  });
+	};
+
+	var _message = new weakMap$2();
+
+	var _lastUid = new weakMap$2();
+
+	var _ALL_SUBSCRIBING_MSG = new weakMap$2();
+
+	_defineProperty(PubSub, "immediateExceptions", undefined);
+
+	_defineProperty(PubSub, "publish", function (message, data) {
+	  return PubSub._publish(message, data, false, PubSub.immediateExceptions);
+	});
+
+	_defineProperty(PubSub, "getInstance", function () {
+	  if (!PubSub.instance) {
+	    PubSub.instance = new PubSub();
+	  }
+
+	  return PubSub.instance;
+	});
+
+	var Dp = {
+	  Observer: Observer,
+	  PubSub: PubSub
+	};
+
 	// import rum from './design-patterns';
 	var main = {
 	  DS: DS,
 	  MyPromise: MyPromise,
 	  liquors: liquors,
 	  Smobx: Smobx,
-	  Sreact: Sreact
+	  Sreact: Sreact,
+	  Dp: Dp
 	};
 
 	return main;

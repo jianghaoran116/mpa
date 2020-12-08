@@ -15,11 +15,13 @@ import liquors from './arith-metic';
 import MyPromise from './wheel/my-promise';
 import Smobx from './s-mobx/s-mobx';
 import Sreact from './s-react/index.js';
+import Dp from './design-patterns/index.js';
 
 export default {
   DS,
   MyPromise,
   liquors,
   Smobx,
-  Sreact
+  Sreact,
+  Dp,
 }
