@@ -5091,9 +5091,10 @@ var main = (function () {
 
 	/**
 	 * @file 订阅发布器
-	 * @author haoran
+	 * @author git://github.com/mroderick/PubSubJS.git
 	 */
-	var PubSub = function PubSub() {
+	var PubSub = // 记录消息
+	function PubSub() {
 	  var _this = this;
 
 	  _classCallCheck(this, PubSub);
@@ -5114,9 +5115,7 @@ var main = (function () {
 	  });
 
 	  _defineProperty(this, "hasKeys", function (obj) {
-	    var key;
-
-	    for (key in obj) {
+	    for (var key in obj) {
 	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
 	        return true;
 	      }
@@ -5240,8 +5239,7 @@ var main = (function () {
 	      return false;
 	    }
 
-	    message = _typeof(message) === "symbol" ? message.toString() : message;
-	    console.log("this.#messages:::", _classPrivateFieldGet(_this, _messages)); // message is not registered yet
+	    message = _typeof(message) === "symbol" ? message.toString() : message; // message is not registered yet
 
 	    if (!Object.prototype.hasOwnProperty.call(_classPrivateFieldGet(_this, _messages), message)) {
 	      _classPrivateFieldGet(_this, _messages)[message] = {};
@@ -5249,7 +5247,7 @@ var main = (function () {
 	    // and allow for easy use as key names for the 'messages' object
 
 
-	    var token = "uid_" + String(_classPrivateFieldSet(_this, _lastUid, +_classPrivateFieldGet(_this, _lastUid) + 1));
+	    var token = "@pubsub_uid_" + String(_classPrivateFieldSet(_this, _lastUid, +_classPrivateFieldGet(_this, _lastUid) + 1));
 	    _classPrivateFieldGet(_this, _messages)[message][token] = func; // return token for unsubscribing
 
 	    return token;
@@ -5323,7 +5321,6 @@ var main = (function () {
 	      return false;
 	    };
 
-	    console.log("this.#messages:::", _classPrivateFieldGet(_this, _messages));
 	    var isTopic = typeof value === "string" && (Object.prototype.hasOwnProperty.call(_classPrivateFieldGet(_this, _messages), value) || descendantTopicExists(value)),
 	        isToken = !isTopic && typeof value === "string",
 	        isFunction = typeof value === "function",

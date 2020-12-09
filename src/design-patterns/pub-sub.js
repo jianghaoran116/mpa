@@ -1,9 +1,10 @@
 /**
  * @file 订阅发布器
- * @author haoran
+ * @author git://github.com/mroderick/PubSubJS.git
  */
+
 class PubSub {
-  #messages = {};
+  #messages = {}; // 记录消息
   #lastUid = -1;
   #ALL_SUBSCRIBING_MSG = "*";
 
@@ -12,9 +13,7 @@ class PubSub {
   }
 
   hasKeys = (obj) => {
-    var key;
-
-    for (key in obj) {
+    for (let key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
         return true;
       }
@@ -77,6 +76,12 @@ class PubSub {
     }
   };
 
+  /**
+   * 创建交付函数 返回函数
+   * @param {*} message 
+   * @param {*} data 
+   * @param {*} immediateExceptions 
+   */
   createDeliveryFunction = (message, data, immediateExceptions) => {
     // deliverNamespaced
     return () => {
@@ -102,18 +107,25 @@ class PubSub {
     };
   };
 
+  /**
+   * 每次发消息前都会判断一下有没有message
+   * @param {*} message 
+   */
   hasDirectSubscribersFor = (message) => {
     var topic = String(message),
       found = Boolean(
         Object.prototype.hasOwnProperty.call(this.#messages, topic) &&
           this.hasKeys(this.#messages[topic])
       );
-
     return found;
   };
 
+  /**
+   * 寻找消息的key 支持"."分层寻找消息
+   * @param {*} message 
+   */
   messageHasSubscribers = (message) => {
-    var topic = String(message),
+    let topic = String(message),
       found =
         this.hasDirectSubscribersFor(topic) ||
         this.hasDirectSubscribersFor(this.#ALL_SUBSCRIBING_MSG),
@@ -188,7 +200,7 @@ class PubSub {
     }
 
     message = typeof message === "symbol" ? message.toString() : message;
-    console.log("this.#messages:::", this.#messages);
+
     // message is not registered yet
     if (!Object.prototype.hasOwnProperty.call(this.#messages, message)) {
       this.#messages[message] = {};
@@ -196,7 +208,7 @@ class PubSub {
 
     // forcing token as String, to allow for future expansions without breaking usage
     // and allow for easy use as key names for the 'messages' object
-    var token = "uid_" + String(++this.#lastUid);
+    var token = "@pubsub_uid_" + String(++this.#lastUid);
     this.#messages[message][token] = func;
 
     // return token for unsubscribing
@@ -326,7 +338,7 @@ class PubSub {
 
       return false;
     };
-    console.log("this.#messages:::", this.#messages);
+
     let isTopic =
         typeof value === "string" &&
         (Object.prototype.hasOwnProperty.call( this.#messages, value ) || descendantTopicExists(value)),
